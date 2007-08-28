@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#Liten 0.1a:  (Note this is alpha quality.  Be careful kids!)
+#Liten 0.1aRC2:  (Note this is alpha quality.  Be careful kids!)
 #A Deduplication Tool
 #Author:  Noah Gift
 #License: New BSD
@@ -133,12 +133,17 @@ class LitenBaseClass(FileRecord):
         Reads in file.  Creates checksum of file line by line.
         Returns complete checksum total for file.
         """
-        fp = open(path)
-        checksum = md5.new()
-        for line in fp:
-            checksum.update(line)
-        fp.close()
-        checksum = checksum.digest()
+        try:
+            fp = open(path)
+            checksum = md5.new()
+            for line in fp:
+                checksum.update(line)
+            fp.close()
+            checksum = checksum.digest()
+        except IOError:
+            print "IO error for %s" % path
+            checksum = None
+
         return checksum
 
     def createDupRecord(self):      #Need to implement
@@ -150,6 +155,9 @@ class LitenBaseClass(FileRecord):
         return date
 
     def createExt(self, file):
+        """
+        takes a file on a path and returns extension
+        """
         (shortname, ext) = os.path.splitext(file)
         return ext
 
@@ -325,7 +333,17 @@ class LitenController(object):
         else:
             p.print_help()  #note if nothing is specified on the command line or if more than one parameter is specified, help is printed
 
-if __name__ == "__main__":
+class CreateVolumeMetadata(object):
+    """
+    Not implemented
+    """
+    pass
+
+def _main():
+    """
+    runs liten
+    """
     create = LitenController()
     create.run()
-
+if __name__ == "__main__":
+    _main()
