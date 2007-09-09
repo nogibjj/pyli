@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-#Liten 0.1aRC2:  (Note this is alpha quality.  Be careful kids!)
+#09/09/07
+#Liten 0.1.2
 #A Deduplication Tool
 #Author:  Noah Gift
 #License: New BSD
@@ -95,9 +96,13 @@ class FileRecord(FileType):     #Need to implement
 class LitenBaseClass(FileRecord):
     """
     A base class for searching a file tree.
+
     Contains several methods for analyzing file objects.
     Main method is diskWalker, which walks filesystem and determines
     duplicates.
+
+    >>> Liten = LitenBaseClass()
+
     """
 
     def __init__(self, spath=None, fileSizeMB=1, reportPath="LitenDuplicateReport.txt", verbose=True):
@@ -230,7 +235,7 @@ class LitenBaseClass(FileRecord):
                                 print byte_size/1048576, "MB ", "Orig: ", orig_path, "Dupe: ", path
 
                                 #write out to report
-                                report.write("Duplicte Version,     Path,       Size,       ModDate\n")
+                                report.write("Duplicate Version,     Path,       Size,       ModDate\n")
                                 #Write original line
                                 report.write("%s, %s, %s MB, %s\n" % ("Original", orig_path, byte_size/1048576, orig_mod_date))
 
@@ -324,6 +329,8 @@ class LitenController(object):
                 fileSizeMB = int(options.size)
                 start = LitenBaseClass(spath, fileSizeMB)
                 value = start.diskWalker()
+            elif options.doctest:
+                _test()
             else:
                 start = LitenBaseClass(spath)
                 value = start.diskWalker()
@@ -341,9 +348,22 @@ class CreateVolumeMetadata(object):
 
 def _main():
     """
-    runs liten
+    Runs liten.
     """
     create = LitenController()
     create.run()
+def _test():
+    """
+    Runs doctests
+    """
+    import doctest
+    doctest.testmod()
+
 if __name__ == "__main__":
-    _main()
+    """Looks for -v to run doctests else runs main application"""
+    try:
+        if sys.argv[1] == "-v":
+           _test()
+    except:
+        _main()
+

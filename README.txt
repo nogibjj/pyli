@@ -1,7 +1,7 @@
-Date: 08/19/07
+Date: 08/27/07
 Author:  Noah Gift
 Program: Liten
-Version:  0.1a (Bleeding Edge Alpha Version of deduplicator software.  Just prints reports for now)
+Version:  0.1aRC2 (Bleeding Edge Alpha Version of deduplicator software.  Just prints reports for now)
 
 This command line tools detects duplicates by using a md5 checksum algorithm.
 For the most, things should just work.  Duplicates and Originals get printed to stdout.
