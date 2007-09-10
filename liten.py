@@ -393,6 +393,8 @@ if __name__ == "__main__":
     try:
         if sys.argv[1] == "-v":
            _test()
+        else:
+            _main()
     except:
         _main()
 
