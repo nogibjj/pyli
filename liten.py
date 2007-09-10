@@ -115,12 +115,17 @@ class LitenBaseClass(FileRecord):
 
     """
 
-    def __init__(self, spath=None, fileSizeMB=1, reportPath="LitenDuplicateReport.txt", verbose=True):
+    def __init__(self, spath=None,
+                    fileSizeMB=1,
+                    reportPath="LitenDuplicateReport.txt",
+                    verbose=True,
+                    quiet=False):
         FileRecord.__init__(self)
         self.spath = spath
         self.reportPath = reportPath
         self.fileSizeMB = fileSizeMB
         self.verbose = verbose
+        self.quiet = False
         self.checksum_cache_key = {}
         self.checksum_cache_value = {}
         self.confirmed_dup_key = {}
@@ -207,23 +212,12 @@ class LitenBaseClass(FileRecord):
         (Note that test includes .svn directory)
 
         >> from liten import LitenBaseClass
-        >>> Liten = LitenBaseClass(spath='testData')
+        >>> Liten = LitenBaseClass(spath='testData', verbose=False)
         >>> Liten.diskWalker()
-        Printing dups over 1 MB using md5 checksum: [SIZE] [ORIG] [DUP]
-        <BLANKLINE>
-        <BLANKLINE>
-        LITEN REPORT: 
-        <BLANKLINE>
-        Search Path:                  testData
-        Total Files Searched:         9
-        Duplicates Found:             0
-        Wasted Space in Duplicates:   0  MB
-        Report Generated at:          LitenDuplicateReport.txt
-        Search Time:                  0  minutes
-        <BLANKLINE>
         {}
 
         """
+        verbose = self.verbose
         spath = self.spath
         reportPath = self.reportPath
         fileSizeMB = self.fileSizeMB
@@ -242,8 +236,8 @@ class LitenBaseClass(FileRecord):
 
         #times directory walk
         start = time.time()
-
-        print "Printing dups over %s MB using md5 checksum: [SIZE] [ORIG] [DUP]" % fileSizeMB
+        if verbose:
+            print "Printing dups over %s MB using md5 checksum: [SIZE] [ORIG] [DUP]" % fileSizeMB
         for root, dirs, files in main_path:
             for file in files:
                 path = os.path.join(root,file)      #establishes full path
@@ -263,7 +257,8 @@ class LitenBaseClass(FileRecord):
                                 #grab original file path from checksum_cache dict
                                 orig_path = checksum_cache_key[checksum]['fullPath']
                                 orig_mod_date = checksum_cache_key[checksum]['modDate']
-                                print byte_size/1048576, "MB ", "Orig: ", orig_path, "Dupe: ", path
+                                if verbose:
+                                    print byte_size/1048576, "MB ", "Orig: ", orig_path, "Dupe: ", path
 
                                 #write out to report
                                 report.write("Duplicate Version,     Path,       Size,       ModDate\n")
@@ -318,18 +313,19 @@ class LitenBaseClass(FileRecord):
                             byte_cache[byte_size] = None
                             #pickle out file_system_record
 
-        print "\n"
-        print "LITEN REPORT: \n"
-        print "Search Path:                 ", spath
-        print "Total Files Searched:        ", record_count
-        print "Duplicates Found:            ", len(confirmed_dup_key)
-        print "Wasted Space in Duplicates:  ", byte_count/1048576, " MB"
-        print "Report Generated at:         ", reportPath
-        #get finish time
-        end = time.time()
-        timer = end - start
-        timer = long(timer/60)
-        print "Search Time:                 ", timer, " minutes\n"
+        if verbose:
+            print "\n"
+            print "LITEN REPORT: \n"
+            print "Search Path:                 ", spath
+            print "Total Files Searched:        ", record_count
+            print "Duplicates Found:            ", len(confirmed_dup_key)
+            print "Wasted Space in Duplicates:  ", byte_count/1048576, " MB"
+            print "Report Generated at:         ", reportPath
+            #get finish time
+            end = time.time()
+            timer = end - start
+            timer = long(timer/60)
+            print "Search Time:                 ", timer, " minutes\n"
 
         return  confirmed_dup_key   #Note returns a dictionary of all duplicate records
 
