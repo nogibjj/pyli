@@ -204,16 +204,18 @@ class LitenBaseClass(FileRecord):
         or appending byte_size to list and moving to next file.  A md5 checksum is made of any file that has
         a byte size that has been found before.  The checksum is then used as the basis to determine duplicates.
 
+        (Note that test includes .svn directory)
+
         >> from liten import LitenBaseClass
         >>> Liten = LitenBaseClass(spath='testData')
         >>> Liten.diskWalker()
         Printing dups over 1 MB using md5 checksum: [SIZE] [ORIG] [DUP]
         <BLANKLINE>
         <BLANKLINE>
-        LITEN REPORT:
+        LITEN REPORT: 
         <BLANKLINE>
         Search Path:                  testData
-        Total Files Searched:         3
+        Total Files Searched:         9
         Duplicates Found:             0
         Wasted Space in Duplicates:   0  MB
         Report Generated at:          LitenDuplicateReport.txt
