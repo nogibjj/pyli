@@ -100,7 +100,7 @@ class LitenBaseClass(FileRecord):
     Contains several methods for analyzing file objects.
     Main method is diskWalker, which walks filesystem and determines
     duplicates.
-    
+
     >>> Liten = LitenBaseClass(spath='testData')
     >>> fakePath = 'testData/testDocOne.txt'
     >>> modDate = Liten.makeModDate(fakePath)
@@ -115,7 +115,11 @@ class LitenBaseClass(FileRecord):
     True
     >>> checksumOne == checksumThree
     False
-
+    >>> DupRecord = Liten.createDupRecord()
+    >>> SearchDate = Liten.createSearchDate()
+    >>> createExt = Liten.createExt(dupeFileOne)
+    >>> createExt
+    '.txt'
 
     """
 
