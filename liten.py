@@ -118,14 +118,12 @@ class LitenBaseClass(FileRecord):
     def __init__(self, spath=None,
                     fileSizeMB=1,
                     reportPath="LitenDuplicateReport.txt",
-                    verbose=True,
-                    quiet=False):
+                    verbose=True):
         FileRecord.__init__(self)
         self.spath = spath
         self.reportPath = reportPath
         self.fileSizeMB = fileSizeMB
         self.verbose = verbose
-        self.quiet = False
         self.checksum_cache_key = {}
         self.checksum_cache_value = {}
         self.confirmed_dup_key = {}
@@ -345,16 +343,23 @@ class LitenController(object):
         """Run method for Class"""
         p = optparse.OptionParser(description='A tool to examine your filesystem and find duplicates using md5 checksums.',
                                                 prog='liten',
-                                                version='liten 0.1a(alpha)',
+                                                version='liten 0.1.2',
                                                 usage= '%prog [starting directory] [options]')
         p.add_option('--size', '-s', help='File Size in MB Threshold To Examine For Duplicates', default='1')
+        p.add_option('--quiet', '-q', help='Suppresses all STDOUT.')
         options, arguments = p.parse_args()
 
+        #Note this can be cleaned up. Too many conditionals.
         if len(arguments) == 1:
             spath = arguments[0]
-            if options.size:
+            if options.quiet:
+                start = LitenBaseClass(spath, verbose=False)
+            elif options.size:
                 fileSizeMB = int(options.size)
-                start = LitenBaseClass(spath, fileSizeMB)
+                verbose = True
+                if options.quiet:
+                    verbose = False
+                start = LitenBaseClass(spath, fileSizeMB, verbose=verbose)
                 value = start.diskWalker()
             elif options.doctest:
                 _test()
