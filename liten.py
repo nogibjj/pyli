@@ -99,6 +99,8 @@ class LitenBaseClass(FileRecord):
     >>> createDate = Liten.makeCreateDate(fakePath)
     >>> dupeFileOne = 'testData/testDocOne.txt'
     >>> checksumOne = Liten.createChecksum(dupeFileOne)
+    >>> badChecksumAttempt = Liten.createChecksum('fileNotFound.txt')
+    IO error for fileNotFound.txt
     >>> dupeFileTwo = 'testData/testDocTwo.txt'
     >>> checksumTwo = Liten.createChecksum(dupeFileTwo)
     >>> nonDupeFile = 'testData/testDocThree_wrong_match.txt'
