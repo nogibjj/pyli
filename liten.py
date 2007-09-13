@@ -20,7 +20,7 @@
 
 import os
 import datetime
-#import re                  #Need to implement
+import re
 import sys
 import string
 import time
@@ -118,13 +118,13 @@ class LitenBaseClass(FileRecord):
     """
 
     def __init__(self, spath=None,
-                    fileSizeMB=1,
+                    fileSize='1 MB',
                     reportPath="LitenDuplicateReport.txt",
                     verbose=True):
         FileRecord.__init__(self)
         self.spath = spath
         self.reportPath = reportPath
-        self.fileSizeMB = fileSizeMB
+        self.fileSize = fileSize
         self.verbose = verbose
         self.checksum_cache_key = {}
         self.checksum_cache_value = {}
@@ -201,6 +201,31 @@ class LitenBaseClass(FileRecord):
                 'fileExt': fileExt}
         return value
 
+    def sizeType(self):
+        """
+        Calculates size based on input.
+
+        Uses regex search of input to determine size type.
+        """
+        fileSize = self.fileSize
+
+        patterns = {'bytes': '1',
+                    'KB': '1024',
+                    'MB': '1048576',
+                    'GB': '1073741824',
+                    'TB': '1099511627776'}
+
+
+
+        #for key in patterns:
+        #    value = patterns[key]
+        #    if re.search(key, fileSize):
+        #        print key, fileSize
+        #        byteSize = re.sub(key,fileSize).strip()    #eliminates words
+        #        byteSize = fileSize * int(value)
+        byteSize = fileSize
+        return byteSize
+
     def diskWalker(self):
         """Walks Directory Tree Looking at Every File, while performing a duplication match algorithm.
 
@@ -220,7 +245,6 @@ class LitenBaseClass(FileRecord):
         verbose = self.verbose
         spath = self.spath
         reportPath = self.reportPath
-        fileSizeMB = self.fileSizeMB
         report = open(reportPath, 'w')
         main_path = os.walk(spath)
         byte_cache= self.byte_cache
@@ -230,6 +254,7 @@ class LitenBaseClass(FileRecord):
         confirmed_dup_value = self.confirmed_dup_value
         master_key = self.master_key
         master_value = self.master_value
+        byteSizeThreshold = self.sizeType()
         dupNumber=0
         byte_count=0
         record_count=0
@@ -237,14 +262,14 @@ class LitenBaseClass(FileRecord):
         #times directory walk
         start = time.time()
         if verbose:
-            print "Printing dups over %s MB using md5 checksum: [SIZE] [ORIG] [DUP]" % fileSizeMB
+            print "Printing dups over %s bytes using md5 checksum: [SIZE] [ORIG] [DUP]" % byteSizeThreshold
         for root, dirs, files in main_path:
             for file in files:
                 path = os.path.join(root,file)      #establishes full path
                 if os.path.isfile(path):            #ignores symbolic links
                     byte_size = os.path.getsize(path)
-                    record_count += 1                           #gets number of file examine
-                    if byte_size >= fileSizeMB * 1048576:            #Note create hook for CLI later input size, patt match etc.
+                    record_count += 1                       #gets number of file examine
+                    if byte_size >= byteSizeThreshold:      #Note create hook for CLI later input size, patt match etc.
                         if byte_cache.has_key(byte_size):
                             checksum = self.createChecksum(path)
 
@@ -331,7 +356,7 @@ class LitenBaseClass(FileRecord):
 
 class GenerateDuplicationReport(object):
     """
-    Not implemented yet.
+    Not implemented yet.  Plan on using Report Lab PDF tool.
     """
     pass
 
@@ -347,7 +372,7 @@ class LitenController(object):
                                                 prog='liten',
                                                 version='liten 0.1.2',
                                                 usage= '%prog [starting directory] [options]')
-        p.add_option('--size', '-s', help='File Size in MB Threshold To Examine For Duplicates', default='1')
+        p.add_option('--size', '-s', help='File Size', default='1')
         p.add_option('--quiet', '-q', help='Suppresses all STDOUT.')
         options, arguments = p.parse_args()
 
@@ -357,11 +382,11 @@ class LitenController(object):
             if options.quiet:
                 start = LitenBaseClass(spath, verbose=False)
             elif options.size:
-                fileSizeMB = int(options.size)
+                fileSize  = int(options.size)
                 verbose = True
                 if options.quiet:
                     verbose = False
-                start = LitenBaseClass(spath, fileSizeMB, verbose=verbose)
+                start = LitenBaseClass(spath, fileSize, verbose=verbose)
                 value = start.diskWalker()
             elif options.doctest:
                 _test()
