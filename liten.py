@@ -118,7 +118,7 @@ class LitenBaseClass(FileRecord):
     """
 
     def __init__(self, spath=None,
-                    fileSize='1 MB',
+                    fileSize='1MB',
                     reportPath="LitenDuplicateReport.txt",
                     verbose=True):
         FileRecord.__init__(self)
@@ -215,16 +215,22 @@ class LitenBaseClass(FileRecord):
                     'GB': '1073741824',
                     'TB': '1099511627776'}
 
-
-
-        #for key in patterns:
-        #    value = patterns[key]
-        #    if re.search(key, fileSize):
-        #        print key, fileSize
-        #        byteSize = re.sub(key,fileSize).strip()    #eliminates words
-        #        byteSize = fileSize * int(value)
-        byteSize = fileSize
-        return byteSize
+        #Detects File Size Type, Strips off Characters
+        #Converts value to bytes
+        for key in patterns:
+            value = patterns[key]
+            try:
+                if re.search(key, fileSize):
+                    #print "Key: %s Filesize: %s " % (key, fileSize)
+                    #print "Value: %s " % value
+                    byteValue = int(fileSize.strip(key)) * int(value)
+                    #print "Converted byte value: %s " % byteValue
+                else:
+                    byteValue = int(fileSize.strip()) * int(1048576)
+                    #print "Converted byte value: %s " % byteValue
+            except:
+                pass    #Note this gets caught using optparse which is cleaner
+        return byteValue
 
     def diskWalker(self):
         """Walks Directory Tree Looking at Every File, while performing a duplication match algorithm.
@@ -255,6 +261,7 @@ class LitenBaseClass(FileRecord):
         master_key = self.master_key
         master_value = self.master_value
         byteSizeThreshold = self.sizeType()
+        printSize = self.fileSize       #From command line input
         dupNumber=0
         byte_count=0
         record_count=0
@@ -262,7 +269,7 @@ class LitenBaseClass(FileRecord):
         #times directory walk
         start = time.time()
         if verbose:
-            print "Printing dups over %s bytes using md5 checksum: [SIZE] [ORIG] [DUP]" % byteSizeThreshold
+            print "Printing dups over %s bytes using md5 checksum: [SIZE] [ORIG] [DUP]" % printSize
         for root, dirs, files in main_path:
             for file in files:
                 path = os.path.join(root,file)      #establishes full path
@@ -372,7 +379,9 @@ class LitenController(object):
                                                 prog='liten',
                                                 version='liten 0.1.2',
                                                 usage= '%prog [starting directory] [options]')
-        p.add_option('--size', '-s', help='File Size', default='1')
+        p.add_option('--size', '-s',
+                    help='File Size Example:  10bytes, 10KB, 10MB,10GB,10TB, or plain number defaults to MB (1 = 1MB)',
+                    default='1MB')
         p.add_option('--quiet', '-q', help='Suppresses all STDOUT.')
         options, arguments = p.parse_args()
 
@@ -381,19 +390,21 @@ class LitenController(object):
             spath = arguments[0]
             if options.quiet:
                 start = LitenBaseClass(spath, verbose=False)
-            elif options.size:
-                fileSize  = int(options.size)
+            elif options.size:  #This input gets stripped into a meaningful chunks
+                fileSize  = options.size
                 verbose = True
                 if options.quiet:
                     verbose = False
                 start = LitenBaseClass(spath, fileSize, verbose=verbose)
-                value = start.diskWalker()
+                try:
+                    value = start.diskWalker()
+                except UnboundLocalError:       #Here I catch bogus size input exceptions
+                    p.print_help()
             elif options.doctest:
                 _test()
             else:
                 start = LitenBaseClass(spath)
                 value = start.diskWalker()
-
             #for key in value:
             #    print key
         else:
