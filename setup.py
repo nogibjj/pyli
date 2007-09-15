@@ -16,10 +16,10 @@ setup(name='liten',
       long_description="This command line tool will examine a file system and report back duplicates using a md5 checksum hash algorithm.",
       author='Noah Gift',
       author_email='noah.gift@gmail.com',
-      url='http://zooko.com/repos/pyutil',
+      url='http://code.google.com/p/liten/',
       license='GNU GPL3',
       packages=find_packages(),
-      classifiers=trove_classifiers
-      zip_safe=False, # I prefer unzipped for easier access.
+      classifiers=trove_classifiers,
+      zip_safe=False,
       )
 
