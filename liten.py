@@ -421,7 +421,7 @@ def _main():
 def _test():
     """Runs doctests."""
     import doctest
-    doctest.testmod()
+    doctest.testmod(verbose=True)
 
 if __name__ == "__main__":
     """Looks for -v to run doctests else runs main application"""
