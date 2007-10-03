@@ -411,21 +411,15 @@ class LitenController(object):
             p.print_help()  #note if nothing is specified on the command line or if more than one parameter is specified, help is printed
 
 class CreateVolumeMetadata(object):
-    """
-    Not implemented
-    """
+    """Not implemented."""
     pass
 
 def _main():
-    """
-    Runs liten.
-    """
+    """Runs liten."""
     create = LitenController()
     create.run()
 def _test():
-    """
-    Runs doctests
-    """
+    """Runs doctests."""
     import doctest
     doctest.testmod()
 

@@ -4,9 +4,6 @@
 #
 # Author: Noah Gift
 
-from ez_setup import use_setuptools
-use_setuptools(min_version="0.6a9")
-
 from setuptools import Extension, find_packages, setup
 
 
@@ -19,7 +16,6 @@ setup(name='liten',
       url='http://code.google.com/p/liten/',
       license='GNU GPL3',
       packages=find_packages(),
-      classifiers=trove_classifiers,
       zip_safe=False,
       )
 
