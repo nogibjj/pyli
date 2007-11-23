@@ -1,7 +1,7 @@
-Date: 09/15/07
+Date: 11/23/07
 Author:  Noah Gift
 Program: Liten
-Version:  0.1.2 (Just Prints Report)
+Version:  0.1.3 (Just Prints Report)
 
 This command line tools detects duplicates by using a md5 checksum algorithm.
 For the most, things should just work.  Duplicates and Originals get printed to stdout.
@@ -13,6 +13,12 @@ handy CSV formatted report in your current directory.  Later versions will have 
 deletion systems, cached query systems and more.  Stay tuned!
 
 Note:  To run doctests run:  ./liten -v, or test_liten.py for unittests
+
+CHANGE LOG:
+
+Added with 0.1.3:
+
+* Got rid of cruft.
 
 Added with 0.1.2:
 
@@ -34,13 +40,9 @@ The duplicate printing only reflects values about MB for now.  Will fix in 0.1.3
 * Extensive doctests
 * Extensive unittests
 
-Plan for 0.1.3:
 
-* Better printing and reporting
-*
-
-Future To Do:
-
+FUTURE PLANS:
+    
 * Need deletion system
 * Need cached query system.
 * More command line options.
