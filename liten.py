@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-#09/09/07
-#Liten 0.1.2
+#11/23/07
+#Liten 0.1.3
 #A Deduplication Tool
 #Author:  Noah Gift
 #License: GPLv3
@@ -25,67 +25,10 @@ import sys
 import string
 import time
 import optparse
-#import shelve              #Need to implement
 import md5
 #import logging             #Need to implement logging
 
-class FileType(object):                         #Need to implement
-    """A class that holds file type attributes"""
-
-    FileTypeMap = {".txt" : "Plain Text",
-                    ".mp3" : "Music",
-                    ".mp4" : "Music",
-                    ".wav" : "Music",
-                    ".pdf" : "Portable Document Format",
-                    ".doc" : "Document"}
-
-    def printMethod(self):
-                                #Write duplicate line
-        """Prints out current FileTypeMap Class Attributes."""
-        print self.FileTypeMap
-
-class FileRecord(FileType):     #Need to implement
-    """A record class for holding information
-    for a file on a file system. And for confirmed duplicates"""
-
-    def __init__(self, name=None,
-                    fullPath='__init__ method object in FileRecord',
-                    modDate=None,
-                    createDate=None,
-                    dupNumber=None,
-                    searchDate=None,
-                    checksum=None,
-                    bytes=None,
-                    fileType=None,
-                    fileExt=None):
-
-        self.name = name
-        self.fullPath = fullPath
-        self.modDate = modDate
-        self.createDate = createDate
-        self.dupNumber = dupNumber
-        self.searchDate = searchDate
-        self.checksum = checksum
-        self.bytes = bytes
-        self.fileType = fileType
-        self.fileExt = fileExt
-
-    def test(self):
-        print self.fullPath
-
-    def info(self):
-        return (self.name,
-                self.fullPath,
-                self.modDate,
-                self.createDate,
-                self.dupNumber,
-                self.searchDate,
-                self.checksum,
-                self.bytes,
-                self.fileType,
-                self.fileExt)
-
-class LitenBaseClass(FileRecord):
+class LitenBaseClass():
     """
     A base class for searching a file tree.
 
@@ -109,7 +52,6 @@ class LitenBaseClass(FileRecord):
     True
     >>> checksumOne == checksumThree
     False
-    >>> DupRecord = Liten.createDupRecord()
     >>> SearchDate = Liten.createSearchDate()
     >>> createExt = Liten.createExt(dupeFileOne)
     >>> createExt
@@ -121,7 +63,6 @@ class LitenBaseClass(FileRecord):
                     fileSize='1MB',
                     reportPath="LitenDuplicateReport.txt",
                     verbose=True):
-        FileRecord.__init__(self)
         self.spath = spath
         self.reportPath = reportPath
         self.fileSize = fileSize
@@ -166,9 +107,6 @@ class LitenBaseClass(FileRecord):
 
         return checksum
 
-    def createDupRecord(self):      #Need to implement
-        pass
-
     def createSearchDate(self):
         now = datetime.datetime.now()
         date = now.strftime("%Y%m%d")
@@ -180,26 +118,6 @@ class LitenBaseClass(FileRecord):
         """
         (shortname, ext) = os.path.splitext(file)
         return ext
-
-
-    def createRecord(self,path, file, key, value):  #Need to implement
-        """
-        Generically creates a file record
-        """
-        createDate = self.makeCreateDate(path)
-        modDate = self.makeCreateDate(path)
-        searchDate = self.createDate()
-        fileType = None
-        fileExt = createExt(file)
-        value = {'fullPath': path,
-                'modDate': modDate,
-                'dupNumber': dupNumber,
-                'searchDate': searchDate,
-                'checksum': checksum,
-                'bytes': bytes,
-                'fileType': fileType,
-                'fileExt': fileExt}
-        return value
 
     def sizeType(self):
         """
@@ -361,12 +279,6 @@ class LitenBaseClass(FileRecord):
 
         return  confirmed_dup_key   #Note returns a dictionary of all duplicate records
 
-class GenerateDuplicationReport(object):
-    """
-    Not implemented yet.  Plan on using Report Lab PDF tool.
-    """
-    pass
-
 class LitenController(object):
     """
     Controller for DiskStat Command Line Tool.
@@ -409,10 +321,6 @@ class LitenController(object):
             #    print key
         else:
             p.print_help()  #note if nothing is specified on the command line or if more than one parameter is specified, help is printed
-
-class CreateVolumeMetadata(object):
-    """Not implemented."""
-    pass
 
 def _main():
     """Runs liten."""

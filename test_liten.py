@@ -2,20 +2,7 @@
 #unittests for liten
 import unittest
 
-from liten import LitenBaseClass, LitenController, FileType, FileRecord
-
-
-class TestLitenFileType(unittest.TestCase):
-    """Tests for LitenController."""
-
-    def testFileType(self):
-        self.assertRaises(TypeError, FileType())
-
-class TestLitenFileRecord(unittest.TestCase):
-    """Tests for LitenController."""
-
-    def testFileRecord(self):
-        self.assertRaises(TypeError, FileRecord())
+from liten import LitenBaseClass, LitenController
 
 class TestLitenBaseClass(unittest.TestCase):
     """Tests for LitenBaseClass Class."""
@@ -35,9 +22,6 @@ class TestLitenBaseClass(unittest.TestCase):
         self.NoQualifier = '1' #No Qualifier defaults to MB/ 1048576 bytes
         self.Bogus = '9foo' #Bogus data
 
-    def testLitenBaseClass(self):
-        """Test Basic Class Instantiation Behavior."""
-        self.assertRaises(TypeError, LitenBaseClass())
 
     def testModDate(self):
         """Test modDate method."""
