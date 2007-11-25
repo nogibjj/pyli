@@ -77,8 +77,6 @@ import optparse
 import md5
 import logging
 
-class LitenLoggerClass(object):
-    pass
 
 class LitenBaseClass(object):
     """
@@ -124,6 +122,15 @@ class LitenBaseClass(object):
         self.confirmed_dup_key = {}
         self.confirmed_dup_value = {}
         self.byte_cache = {}
+
+    def log(self):
+        """Method that actually performs logging."""
+
+        logging.basicConfig(level = logging.DEBUG,
+                            format = '%(asctime)s %(levelname)s %(message)s',
+                            filename = "/tmp/LitenLog.txt",
+                            filemode = 'w')
+        return logging
 
     def makeModDate(self,path):
         """
@@ -233,16 +240,20 @@ class LitenBaseClass(object):
             for file in files:
                 path = os.path.join(root,file)      #establishes full path
                 if os.path.isfile(path):            #ignores symbolic links
-                    byte_size = os.path.getsize(path)
+                    self.byte_size = os.path.getsize(path)
                     record_count += 1                       #gets number of file examined
-                    if byte_size >= byteSizeThreshold:      #Note create hook for CLI later input size, patt match etc.
-                        if self.byte_cache.has_key(byte_size):
-                            print "Doing checksum on %s" % path
+                    if self.byte_size >= byteSizeThreshold:      #Note create hook for CLI later input size, patt match etc.
+                        if self.byte_cache.has_key(self.byte_size):
+
+                            #start debug logging
+                            self.log().debug('Doing checksum on %s' % path)
+
+                            #print "Doing checksum on %s" % path
                             checksum = self.createChecksum(path)
 
                             #checking to see if file has same checksum as checksum cache
                             if self.checksum_cache_key.has_key(checksum):
-                                byte_count += byte_size                     #accumulates bytes of duplicates found
+                                byte_count += self.byte_size                     #accumulates bytes of duplicates found
                                 dupNumber += 1                              #accumulates a dupNumber record
 
                                 #print byte_count/1048576, " MB's wasted"
@@ -252,42 +263,42 @@ class LitenBaseClass(object):
                                 orig_path = self.checksum_cache_key[checksum]['fullPath']
                                 orig_mod_date = self.checksum_cache_key[checksum]['modDate']
                                 if self.verbose:
-                                    print byte_size/1048576, "MB ", "Orig: ", orig_path, "Dupe: ", path
+                                    print self.byte_size/1048576, "MB ", "Orig: ", orig_path, "Dupe: ", path
 
                                 #write out to report
                                 report.write("Duplicate Version,     Path,       Size,       ModDate\n")
                                 #Write original line
-                                report.write("%s, %s, %s MB, %s\n" % ("Original", orig_path, byte_size/1048576, orig_mod_date))
+                                report.write("%s, %s, %s MB, %s\n" % ("Original", orig_path, self.byte_size/1048576, orig_mod_date))
 
                                 #Gets Duplicates Modification Date
                                 dupeModDate = self.makeCreateDate(path)
 
                                 #Write duplicate line
-                                report.write("%s, %s, %s MB, %s\n" % ("Duplicate", path, byte_size/1048576, dupeModDate))
+                                report.write("%s, %s, %s MB, %s\n" % ("Duplicate", path, self.byte_size/1048576, dupeModDate))
 
                                 #create original's record
 
                                 #debugging--This is very expensive:
-                                #confirmed_dup_key[orig_path] = self.checksum_cache_value          #Note this is a good spot for the dup rec count
+                                self.confirmed_dup_key[orig_path] = self.checksum_cache_value          #Note this is a good spot for the dup rec count
 
 
-                                #print "Original Duplicate: ", confirmed_dup_key[path]
-                                #print confirmed_[checksum], byte_size/1048576, "MB ", self.makeCreateDate(path),  " ORIG"
+                                #print "Original Duplicate: ", self.confirmed_dup_key[path]
+                                #print confirmed_[checksum], self.byte_size/1048576, "MB ", self.makeCreateDate(path),  " ORIG"
 
                                 #setrecord for duplicate match stored
-                                #confirmed_dup_value = {'fullPath': path,                    #duplicate code clean up later.
-                                #                        'modDate': modDate,
-                                #                        'dupNumber': dupNumber,
-                                #                        'searchDate': searchDate,
-                                #                        'checksum': checksum,
-                                #                        'bytes': byte_size,
-                                #                        'fileType': fileType,
-                                #                        'fileExt': fileExt}
-                                #confirmed_dup_key[path]=confirmed_dup_value
+                                confirmed_dup_value = {'fullPath': path,                    #duplicate code clean up later.
+                                                        'modDate': modDate,
+                                                        'dupNumber': dupNumber,
+                                                        'searchDate': searchDate,
+                                                        'checksum': checksum,
+                                                        'bytes': self.byte_size,
+                                                        'fileType': fileType,
+                                                        'fileExt': fileExt}
+                                self.confirmed_dup_key[path]=confirmed_dup_value
                                 #print "duplicate file: ", path
                                 #if self.verbose:
-                                #    print checksum_cache[checksum], byte_size/1048576, "MB ", self.makeCreateDate(path),  " ORIG"
-                                #    print path, byte_size/1048576, "MB ", self.makeCreateDate(path), " DUP"
+                                #    print self.checksum_cache[checksum], self.byte_size/1048576, "MB ", self.makeCreateDate(path),  " ORIG"
+                                    #print path, self.byte_size/1048576, "MB ", self.makeCreateDate(path), " DUP"
 
                             else:
                                 #get checksum of file that has a byte dupe match
@@ -302,15 +313,15 @@ class LitenBaseClass(object):
                                                                 'dupNumber': dupNumber,
                                                                 'searchDate': searchDate,
                                                                 'checksum': checksum,
-                                                                'bytes': byte_size,
+                                                                'bytes': self.byte_size,
                                                                 'fileType': fileType,
                                                                 'fileExt': fileExt}
 
                                 self.checksum_cache_key[checksum]=self.checksum_cache_value       #creating first checksum only dict.
                                 #print "not a Dupe? ", path
                         else:
-                            self.byte_cache[byte_size] = None
-                            print len(self.byte_cache)
+                            self.log().debug('Length of byte size matches in queue %s' % self.byte_cache)
+                            self.byte_cache[self.byte_size] = None
                             #pickle out file_system_record
 
         if self.verbose:
@@ -318,7 +329,7 @@ class LitenBaseClass(object):
             print "LITEN REPORT: \n"
             print "Search Path:                 ", self.spath
             #print "Total Files Searched:        ", record_count
-            #print "Duplicates Found:            ", len(confirmed_dup_key)
+            #print "Duplicates Found:            ", len(self.confirmed_dup_key)
             print "Wasted Space in Duplicates:  ", byte_count/1048576, " MB"
             print "Report Generated at:         ", self.reportPath
             #get finish time
@@ -327,7 +338,7 @@ class LitenBaseClass(object):
             timer = long(timer/60)
             print "Search Time:                 ", timer, " minutes\n"
 
-        #return  confirmed_dup_key   #Note returns a dictionary of all duplicate records
+        return  self.confirmed_dup_key   #Note returns a dictionary of all duplicate records
 
 class LitenController(object):
     """
