@@ -12,7 +12,7 @@ Please note, that currently this tool just "reports" duplicates and in fact gene
 handy CSV formatted report in your current directory.  Later versions will have sophisticated
 deletion systems, cached query systems and more.  Stay tuned!
 
-Note:  To run doctests run:  ./liten -v, or test_liten.py for unittests
+Note:  To run doctests run:  ./liten -t, or test_liten.py for unittests
 
 CHANGE LOG:
 
@@ -42,7 +42,7 @@ The duplicate printing only reflects values about MB for now.  Will fix in 0.1.3
 
 
 FUTURE PLANS:
-    
+
 * Need deletion system
 * Need cached query system.
 * More command line options.
