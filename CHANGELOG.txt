@@ -5,4 +5,5 @@ Noah Gift
 * Removed cruft.
 * Changed License to MIT
 * Added docstring to liten module, along with documentation.
-
+* Added basic logging function.
+* Refactored code to comply with PEP 8.
