@@ -321,8 +321,8 @@ class LitenBaseClass(object):
                                 orig_path = self.checksum_cache_key[checksum]['fullPath']
                                 orig_mod_date = self.checksum_cache_key[checksum]['modDate']
                                 if self.verbose:
-                                    print self.byte_size/1048576, "MB ", "Orig: ",\
-                                    orig_path, "Dupe: ", path
+                                    print self.byte_size/1048576, "MB ", "ORIG: ",\
+                                    orig_path, "DUPE: ", path
 
                                 #write out to report
                                 report.write("Duplicate Version,     Path,      \
