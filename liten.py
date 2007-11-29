@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#11/24/07
+#11/29/07
 #Liten 0.1.3
 #A Deduplication Tool
 #Author:  Noah Gift
@@ -55,7 +55,8 @@ Dupe:  /Users/ngift/Downloads/bzr-0-4.17.tar
 
 REPORT:
 
-A report named LitenDuplicateReport?.txt will be created in your current working directory.
+A report named LitenDuplicateReport?.txt will be created in your current working
+directory.
 
 Duplicate Version,     Path,       Size,       ModDate
 Original, /Users/ngift/Downloads/bzr-0-2.17.tar, 7 MB, 07/10/2007 01:43:12 AM
@@ -63,9 +64,12 @@ Duplicate, /Users/ngift/Downloads/bzr-0-3.17.tar, 7 MB, 07/10/2007 01:43:27 AM
 
 KNOWN ISSUES:
 
-Very large binary files, .vmdk for example, > 4 GB, can eat up all available memory.
-Working on solution for 0.1.4
+DEBUG MODE ENVIRONMENTAL VARIABLES:
 
+To enable print statement debugging set LITEN_DEBUG to 1
+To enable pdb break point debugging set LITEN_DEBUG to 2
+LITEN_DEBUG_MODE = int(os.environ.get('LITEN_DEBUG', 0))
+Note:  When DEBUG MODE is enabled, a message will appear to standard out
 """
 
 import os
@@ -77,7 +81,18 @@ import time
 import optparse
 import md5
 import logging
+import pdb
 
+#Liten Debug Mode
+#Environmental Variable Options:
+#To enable print statement debugging set LITEN_DEBUG to 1
+#To enable pdb break point debugging set LITEN_DEBUG to 2
+LITEN_DEBUG_MODE = int(os.environ.get('LITEN_DEBUG', 0))
+MESSAGE = "LITEN DEBUG MODE ENABLED:"
+if LITEN_DEBUG_MODE == 1:
+    print "%s Print Mode" % MESSAGE
+if LITEN_DEBUG_MODE == 2:
+    print "%s pdb Mode" % MESSAGE
 
 class LitenBaseClass(object):
     """
@@ -115,7 +130,9 @@ class LitenBaseClass(object):
                     reportPath="LitenDuplicateReport.txt",
                     logPath="/tmp/liten.log",
                     threshold="logging.INFO",
-                    verbose=True):
+                    verbose=True,
+                    log = False):
+
         self.spath = spath
         self.reportPath = reportPath
         self.logPath = logPath
@@ -133,9 +150,13 @@ class LitenBaseClass(object):
 
         Note, default threshold level is set to INFO.
         This can be changed by setting self.threshold in __init__ method,
-        or from the CLI by setting -d or --debug option.
+        or from the CLI by setting -l or --log option.
 
         """
+        #optional pdb Debug Mode
+        if LITEN_DEBUG_MODE == 2:
+            pdb.set_trace()
+
         logging.basicConfig(level = logging.INFO,
                             format = '%(asctime)s %(levelname)s %(message)s',
                             filename = self.logPath,
@@ -160,19 +181,28 @@ class LitenBaseClass(object):
         """
         Reads in file.  Creates checksum of file line by line.
         Returns complete checksum total for file.
+
         """
+        #optional pdb Debug Mode
+        if LITEN_DEBUG_MODE == 2:
+            pdb.set_trace()
+
         try:
             fp = open(path)
             checksum = md5.new()
-            for line in fp:
-                checksum.update(line)
+            while True:
+                buffer = fp.read(8192)
+                if not buffer:break
+                checksum.update(buffer)
             fp.close()
             checksum = checksum.digest()
         except IOError:
             print "IO error for %s" % path
             checksum = None
             self.log().error('IO error for %s' % path)
-
+        finally:
+            if LITEN_DEBUG_MODE:
+                print "Performing checksum on: %s" % path
         return checksum
 
     def createSearchDate(self):
@@ -193,6 +223,10 @@ class LitenBaseClass(object):
 
         Uses regex search of input to determine size type.
         """
+
+        #optional pdb Debug Mode
+        if LITEN_DEBUG_MODE == 2:
+            pdb.set_trace()
         fileSize = self.fileSize
 
         patterns = {'bytes': '1',
@@ -237,6 +271,10 @@ class LitenBaseClass(object):
         {}
 
         """
+        #optional pdb Debug Mode
+        if LITEN_DEBUG_MODE == 2:
+            pdb.set_trace()
+
         #Local Variables
         report = open(self.reportPath, 'w')
         main_path = os.walk(self.spath)
@@ -249,7 +287,7 @@ class LitenBaseClass(object):
         start = time.time()
 
         if self.verbose:
-            print "Printing dups over %s bytes using md5 checksum: \
+            print "Printing dups over %s using md5 checksum: \
             [SIZE] [ORIG] [DUP]" % self.fileSize
         for root, dirs, files in main_path:
             for file in files:
@@ -364,11 +402,18 @@ class LitenController(object):
     Controller for DiskStat Command Line Tool.
     Handles optionparser parameters and setup.
     """
-
     def run(self):
         """Run method for Class"""
-        p = optparse.OptionParser(description='A tool to examine your filesystem\
-                                    and find duplicates using md5 checksums.',
+
+        #optional pdb Debug Mode
+        if LITEN_DEBUG_MODE == 2:
+            pdb.set_trace()
+
+        descriptionMessage = """
+        A command line tool for detecting duplicates using md5 checksums.
+        """
+
+        p = optparse.OptionParser(description=descriptionMessage,
                                     prog='liten',
                                     version='liten 0.1.3',
                                     usage= '%prog [starting directory] [options]')
@@ -377,9 +422,14 @@ class LitenController(object):
                     plain number defaults to MB (1 = 1MB)',
                     default='1MB')
         p.add_option('--quiet', '-q', help='Suppresses all STDOUT.')
+        p.add_option('--test', '-t', action="store_true",help='Runs doctest.')
+
         options, arguments = p.parse_args()
 
-        if len(arguments) == 1:
+        if options.test:
+            _test()
+
+        elif len(arguments) == 1:
             spath = arguments[0]
             if options.quiet:
                 start = LitenBaseClass(spath, verbose=False)
@@ -394,11 +444,10 @@ class LitenController(object):
                 except UnboundLocalError:
                     #Here I catch bogus size input exceptions
                     p.print_help()
-            elif options.doctest:
-                _test()
             else:
                 start = LitenBaseClass(spath)
                 value = start.diskWalker()
+
         else:
             p.print_help()
 
@@ -406,6 +455,7 @@ def _main():
     """Runs liten."""
     create = LitenController()
     create.run()
+
 def _test():
     """Runs doctests."""
     import doctest
