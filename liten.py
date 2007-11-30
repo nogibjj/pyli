@@ -87,12 +87,14 @@ import pdb
 #Environmental Variable Options:
 #To enable print statement debugging set LITEN_DEBUG to 1
 #To enable pdb break point debugging set LITEN_DEBUG to 2
-LITEN_DEBUG_MODE = int(os.environ.get('LITEN_DEBUG', 0))
-MESSAGE = "LITEN DEBUG MODE ENABLED:"
-if LITEN_DEBUG_MODE == 1:
-    print "%s Print Mode" % MESSAGE
-if LITEN_DEBUG_MODE == 2:
-    print "%s pdb Mode" % MESSAGE
+
+if __debug__:
+    LITEN_DEBUG_MODE = int(os.environ.get('LITEN_DEBUG', 0))
+    MESSAGE = "LITEN DEBUG MODE ENABLED:"
+    if LITEN_DEBUG_MODE == 1:
+        print "%s Print Mode" % MESSAGE
+    if LITEN_DEBUG_MODE == 2:
+        print "%s pdb Mode" % MESSAGE
 
 class LitenBaseClass(object):
     """
@@ -154,8 +156,9 @@ class LitenBaseClass(object):
 
         """
         #optional pdb Debug Mode
-        if LITEN_DEBUG_MODE == 2:
-            pdb.set_trace()
+        if __debug__:
+            if LITEN_DEBUG_MODE == 2:
+                pdb.set_trace()
 
         logging.basicConfig(level = logging.INFO,
                             format = '%(asctime)s %(levelname)s %(message)s',
@@ -184,8 +187,9 @@ class LitenBaseClass(object):
 
         """
         #optional pdb Debug Mode
-        if LITEN_DEBUG_MODE == 2:
-            pdb.set_trace()
+        if __debug__:
+            if LITEN_DEBUG_MODE == 2:
+                pdb.set_trace()
 
         try:
             fp = open(path)
@@ -225,8 +229,9 @@ class LitenBaseClass(object):
         """
 
         #optional pdb Debug Mode
-        if LITEN_DEBUG_MODE == 2:
-            pdb.set_trace()
+        if __debug__:
+            if LITEN_DEBUG_MODE == 2:
+                pdb.set_trace()
         fileSize = self.fileSize
 
         patterns = {'bytes': '1',
@@ -272,8 +277,9 @@ class LitenBaseClass(object):
 
         """
         #optional pdb Debug Mode
-        if LITEN_DEBUG_MODE == 2:
-            pdb.set_trace()
+        if __debug__:
+            if LITEN_DEBUG_MODE == 2:
+                pdb.set_trace()
 
         #Local Variables
         report = open(self.reportPath, 'w')
@@ -406,8 +412,9 @@ class LitenController(object):
         """Run method for Class"""
 
         #optional pdb Debug Mode
-        if LITEN_DEBUG_MODE == 2:
-            pdb.set_trace()
+        if __debug__:
+            if LITEN_DEBUG_MODE == 2:
+                pdb.set_trace()
 
         descriptionMessage = """
         A command line tool for detecting duplicates using md5 checksums.
