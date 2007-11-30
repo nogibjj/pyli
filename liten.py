@@ -8,7 +8,7 @@
 #Copyright (c) 2007, Noah Gift
 
 """
-A deduplication command line tool and library.  An relatively efficient
+A deduplication command line tool and library.  A relatively efficient
 algorithm based on filtering like sized bytes, and then performing a full
 md5 checksum, is used to determine duplicate files/file objects.
 
