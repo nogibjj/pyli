@@ -469,12 +469,5 @@ def _test():
     doctest.testmod(verbose=True)
 
 if __name__ == "__main__":
-    """Looks for -v to run doctests else runs main application"""
-    try:
-        if sys.argv[1] == "-t":
-           _test()
-        else:
-            _main()
-    except:
-        _main()
+    _main()
 
