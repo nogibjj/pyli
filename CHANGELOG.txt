@@ -1,9 +1,20 @@
 11/24/2007
 Noah Gift
-0.1.3
+0.1.3-pre-release
 
 * Removed cruft.
 * Changed License to MIT
 * Added docstring to liten module, along with documentation.
 * Added basic logging function.
 * Refactored code to comply with PEP 8.
+* Added debugging
+* Added --test option to run doctests
+* Fixed checksum algorithm to buffer what it reads into memory
+
+
+12/02/2007
+Noah Gift
+0.1.3-pre-release
+
+* Added lib directory, added lmetadata, ldecorate, and lmetaclass. (future API)
+* Added ConfigParser support

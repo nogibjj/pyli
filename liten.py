@@ -62,7 +62,6 @@ Duplicate Version,     Path,       Size,       ModDate
 Original, /Users/ngift/Downloads/bzr-0-2.17.tar, 7 MB, 07/10/2007 01:43:12 AM
 Duplicate, /Users/ngift/Downloads/bzr-0-3.17.tar, 7 MB, 07/10/2007 01:43:27 AM
 
-KNOWN ISSUES:
 
 DEBUG MODE ENVIRONMENTAL VARIABLES:
 
@@ -70,6 +69,9 @@ To enable print statement debugging set LITEN_DEBUG to 1
 To enable pdb break point debugging set LITEN_DEBUG to 2
 LITEN_DEBUG_MODE = int(os.environ.get('LITEN_DEBUG', 0))
 Note:  When DEBUG MODE is enabled, a message will appear to standard out
+
+QUESTIONS?:  noah.gift@gmail.com
+
 """
 
 import os
@@ -428,32 +430,29 @@ class LitenController(object):
                     help='File Size Example:  10bytes, 10KB, 10MB,10GB,10TB, or \
                     plain number defaults to MB (1 = 1MB)',
                     default='1MB')
-        p.add_option('--quiet', '-q', help='Suppresses all STDOUT.')
+        p.add_option('--quiet', '-q', action="store_true",
+                    help='Suppresses all STDOUT.',default=False)
         p.add_option('--test', '-t', action="store_true",help='Runs doctest.')
 
         options, arguments = p.parse_args()
 
         if options.test:
             _test()
-
-        elif len(arguments) == 1:
+        if options.quiet:
+            verbose = False
+        else:
+            verbose = True
+        if len(arguments) == 1:
             spath = arguments[0]
-            if options.quiet:
-                start = LitenBaseClass(spath, verbose=False)
-            elif options.size:  #This input gets stripped into a meaningful chunks
-                fileSize  = options.size
-                verbose = True
-                if options.quiet:
-                    verbose = False
+            #This input gets stripped into a meaningful chunks
+            fileSize  = options.size
+            try:
                 start = LitenBaseClass(spath, fileSize, verbose=verbose)
-                try:
-                    value = start.diskWalker()
-                except UnboundLocalError:
-                    #Here I catch bogus size input exceptions
-                    p.print_help()
-            else:
-                start = LitenBaseClass(spath)
-                value = start.diskWalker()
+                start.diskWalker()
+            except UnboundLocalError, err:
+                print err
+                #Here I catch bogus size input exceptions
+                p.print_help()
 
         else:
             p.print_help()
@@ -470,4 +469,3 @@ def _test():
 
 if __name__ == "__main__":
     _main()
-
