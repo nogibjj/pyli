@@ -12,7 +12,11 @@ A deduplication command line tool and library.  A relatively efficient
 algorithm based on filtering like sized bytes, and then performing a full
 md5 checksum, is used to determine duplicate files/file objects.
 
-Example CLI Usage:
+EXAMPLE CLI USAGE:
+
+SIZE:
+
+Search by size using --size or -s option:
 
 liten.py -s 1 /mnt/raid         is equal to liten.py -s 1MB /mnt/raid
 liten.py -s 1bytes /mnt/raid
@@ -21,7 +25,19 @@ liten.py -s 1MB /mnt/raid
 liten.py -s 1GB /mnt/raid
 liten.py -s 1TB /mnt/raid
 
-Example Library Usage:
+REPORT LOCATION:
+
+Generate custom report path using -r or --report=/tmp/report.txt:
+
+./liten.py --report=/tmp/test.txt /Users/ngift/Documents
+
+By default a report will be created in CWD, called LitenDuplicateReport.txt.
+
+VERBOSITY:
+
+All stdout can be suppressed by using --quiet or -q.
+
+EXAMPLE LIBRARY USAGE:
 
 Currently Liten is optimized for CLI use, but more library friendly changes
 are coming.
@@ -38,7 +54,7 @@ are coming.
     >>> checksumOne == checksumThree
     False
 
-Tests:
+TESTS:
 
  * Run Doctests:  ./liten -t or --test
  * Run test_liten.py
@@ -295,8 +311,9 @@ class LitenBaseClass(object):
         start = time.time()
 
         if self.verbose:
-            print "Printing dups over %s using md5 checksum: \
-            [SIZE] [ORIG] [DUP]" % self.fileSize
+            print "Printing dups over %s MB using md5 checksum: \
+            [SIZE] [ORIG] [DUP] " % int(byteSizeThreshold/1048576)
+
         for root, dirs, files in main_path:
             for file in files:
                 path = os.path.join(root,file)      #establishes full path
@@ -426,18 +443,26 @@ class LitenController(object):
                                     prog='liten',
                                     version='liten 0.1.3',
                                     usage= '%prog [starting directory] [options]')
+        p.add_option('--config', '-c',
+                    help='Path to read in config file',
+                    action="store_true")
         p.add_option('--size', '-s',
                     help='File Size Example:  10bytes, 10KB, 10MB,10GB,10TB, or \
                     plain number defaults to MB (1 = 1MB)',
                     default='1MB')
         p.add_option('--quiet', '-q', action="store_true",
                     help='Suppresses all STDOUT.',default=False)
+        p.add_option('--report', '-r',
+                    help='Path to store duplication report. Default CWD',
+                    default='LitenDeplicationReport.csv')
         p.add_option('--test', '-t', action="store_true",help='Runs doctest.')
 
         options, arguments = p.parse_args()
 
         if options.test:
             _test()
+        if options.config:
+            print "\n [--config is not yet implemented] \n"
         if options.quiet:
             verbose = False
         else:
@@ -446,8 +471,10 @@ class LitenController(object):
             spath = arguments[0]
             #This input gets stripped into a meaningful chunks
             fileSize  = options.size
+            reportPath = options.report
             try:
-                start = LitenBaseClass(spath, fileSize, verbose=verbose)
+                start = LitenBaseClass(spath, fileSize, reportPath=reportPath,
+                verbose=verbose)
                 start.diskWalker()
             except UnboundLocalError, err:
                 print err
