@@ -110,15 +110,6 @@ class TestLitenBaseClass(unittest.TestCase):
         except UnboundLocalError:
             pass
 
-class TestLitenController(unittest.TestCase):
-    """Tests for LitenController."""
-
-    def testLitenController(self):
-        self.assertRaises(TypeError, LitenController())
-
-    def test_doctester():
-            unittest.TestSuite((
-            DocTestSuite('liten')))
 
 if __name__ == '__main__':
     unittest.main()
