@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #unittests for liten
 import unittest
+import doctest
+from doctest import DocTestSuite
 
 from liten import LitenBaseClass, LitenController
 
@@ -113,6 +115,10 @@ class TestLitenController(unittest.TestCase):
 
     def testLitenController(self):
         self.assertRaises(TypeError, LitenController())
+
+    def test_doctester():
+            unittest.TestSuite((
+            DocTestSuite('liten')))
 
 if __name__ == '__main__':
     unittest.main()

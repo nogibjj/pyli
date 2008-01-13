@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#11/29/07
+#01/13/08
 #Liten 0.1.3
 #A Deduplication Tool
 #Author:  Noah Gift
@@ -97,7 +97,7 @@ import sys
 import string
 import time
 import optparse
-import md5
+import hashlib
 import logging
 import pdb
 
@@ -211,7 +211,7 @@ class LitenBaseClass(object):
 
         try:
             fp = open(path)
-            checksum = md5.new()
+            checksum = hashlib.md5()
             while True:
                 buffer = fp.read(8192)
                 if not buffer:break
@@ -459,8 +459,10 @@ class LitenController(object):
 
         options, arguments = p.parse_args()
 
+        #run tests and then exit
         if options.test:
             _test()
+            sys.exit(0)
         if options.config:
             print "\n [--config is not yet implemented] \n"
         if options.quiet:
@@ -476,10 +478,11 @@ class LitenController(object):
                 start = LitenBaseClass(spath, fileSize, reportPath=reportPath,
                 verbose=verbose)
                 start.diskWalker()
+            #Here I catch bogus size input exceptions
             except UnboundLocalError, err:
-                print err
-                #Here I catch bogus size input exceptions
-                p.print_help()
+                print "Invalid Search Size Parameter: %s run --help for help"\
+                % fileSize
+                sys.exit(0)
 
         else:
             p.print_help()

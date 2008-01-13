@@ -1,0 +1,5 @@
+* Implement configparse
+* Create decorator functions for:
+    * Logger
+    * Debugger
+
