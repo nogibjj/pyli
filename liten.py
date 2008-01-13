@@ -487,7 +487,7 @@ class LitenController(object):
         else:
             p.print_help()
 
-def _main():
+def main():
     """Runs liten."""
     create = LitenController()
     create.run()
@@ -498,4 +498,4 @@ def _test():
     doctest.testmod(verbose=True)
 
 if __name__ == "__main__":
-    _main()
+    main()
