@@ -18,6 +18,7 @@ setup(name='liten',
       license='MIT',
       packages=find_packages(),
       zip_safe=False,
+      py_modules=['liten']
       entry_points="""
       [console_scripts]
       liten = liten:main
