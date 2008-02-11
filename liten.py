@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-#01/13/08
-#Liten 0.1.3
+#02/11/08
+#Liten 0.1.3.1
 #A Deduplication Tool
 #Author:  Noah Gift
 #License:  MIT License
@@ -32,6 +32,15 @@ Generate custom report path using -r or --report=/tmp/report.txt:
 ./liten.py --report=/tmp/test.txt /Users/ngift/Documents
 
 By default a report will be created in CWD, called LitenDuplicateReport.txt.
+
+LOGGING LOCATION:
+
+Generate custom log path using -l or --log=/tmp/liten.log:
+
+./liten.py --log=/tmp/liten.log /Users/ngift/Documents
+
+By default a log will be created in CWD named with USER environmental
+variable appended to the front, such as ngift.liten.log
 
 VERBOSITY:
 
@@ -178,7 +187,10 @@ class LitenBaseClass(object):
             if LITEN_DEBUG_MODE == 2:
                 pdb.set_trace()
 
-        logging.basicConfig(level = logging.INFO,
+        if LITEN_DEBUG_MODE:
+            print "in log method self.logPath = " % self.logPath
+
+        logging.basicConfig(level = self.threshold,
                             format = '%(asctime)s %(levelname)s %(message)s',
                             filename = self.logPath,
                             filemode = 'w')
@@ -271,8 +283,11 @@ class LitenBaseClass(object):
                 else:
                     byteValue = int(fileSize.strip()) * int(1048576)
                     #print "Converted byte value: %s " % byteValue
-            except:
-                pass    #Note this gets caught using optparse which is cleaner
+            except Exception, err:
+                if LITEN_DEBUG_MODE:
+                    print Exception, err
+                else:
+                    pass    #Note this gets caught using optparse which is cleaner
         return byteValue
 
     def diskWalker(self):
@@ -435,6 +450,10 @@ class LitenController(object):
             if LITEN_DEBUG_MODE == 2:
                 pdb.set_trace()
 
+        #variables for logger
+        USER = os.environ.get("USER")
+        log = "%s.%s" % (USER, "liten.log")
+
         descriptionMessage = """
         A command line tool for detecting duplicates using md5 checksums.
         """
@@ -455,6 +474,9 @@ class LitenController(object):
         p.add_option('--report', '-r',
                     help='Path to store duplication report. Default CWD',
                     default='LitenDeplicationReport.csv')
+        p.add_option('--log', '-l',
+                    help='Path to write to logfile. Default CWD',
+                    default=log)
         p.add_option('--test', '-t', action="store_true",help='Runs doctest.')
 
         options, arguments = p.parse_args()
@@ -474,8 +496,11 @@ class LitenController(object):
             #This input gets stripped into a meaningful chunks
             fileSize  = options.size
             reportPath = options.report
+            logPath = options.log
+            print logPath
             try:
                 start = LitenBaseClass(spath, fileSize, reportPath=reportPath,
+                logPath=logPath,
                 verbose=verbose)
                 start.diskWalker()
             #Here I catch bogus size input exceptions

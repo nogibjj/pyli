@@ -1,3 +1,10 @@
+02/11/2008
+Fixed the hardcorded log location issue.
+The default log location is username.liten.log. This allows multiple users to
+write to use liten on the same machine.
+The log file is appended now not overwritten each time.
+The log file location can now be changed from the command line.
+
 01/20/2008
 Adding RPM and Debian Packages, plus long description for setup.py
 
