@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-#02/11/08
-#Liten 0.1.3.1
+#02/17/08
+#Liten 0.1.3.2
 #A Deduplication Tool
 #Author:  Noah Gift
 #License:  MIT License
 #http://www.opensource.org/licenses/mit-license.php
-#Copyright (c) 2007, Noah Gift
+#Copyright (c) 2007,2008 Noah Gift
 
 """
 A deduplication command line tool and library.  A relatively efficient
@@ -109,6 +109,7 @@ import optparse
 import hashlib
 import logging
 import pdb
+import ConfigParser
 
 #Liten Debug Mode
 #Environmental Variable Options:
@@ -437,6 +438,32 @@ class LitenBaseClass(object):
 
         return  self.confirmed_dup_key   #Note returns a dictionary of all duplicate records
 
+class ProcessConfig(object):
+    """
+    Reads in optional configuration file that replaces command line options
+    """
+    def __init__(self, file="config.ini"):
+        self.file = file
+
+    def readConfig(self):
+        """reads and processes config file and returns results"""
+
+        Config = ConfigParser.ConfigParser()
+        Config.read(self.file)
+        sections = Config.sections()
+        for parameter in sections:
+            #uncomment line below to see how this config file is parsed
+            #print Config.items(parameter)
+            try:
+                path = Config.items(parameter)[0][1]
+            except:
+                path = None
+            try:
+                size = Config.items(parameter)[1][1]
+            except:
+                size = None
+        return path, size
+
 class LitenController(object):
     """
     Controller for DiskStat Command Line Tool.
@@ -463,8 +490,7 @@ class LitenController(object):
                                     version='liten 0.1.3',
                                     usage= '%prog [starting directory] [options]')
         p.add_option('--config', '-c',
-                    help='Path to read in config file',
-                    action="store_true")
+                    help='Path to read in config file')
         p.add_option('--size', '-s',
                     help='File Size Example:  10bytes, 10KB, 10MB,10GB,10TB, or \
                     plain number defaults to MB (1 = 1MB)',
@@ -486,7 +512,24 @@ class LitenController(object):
             _test()
             sys.exit(0)
         if options.config:
-            print "\n [--config is not yet implemented] \n"
+            if __debug__:
+                if LITEN_DEBUG_MODE == 2:
+                    pdb.set_trace()
+            process = ProcessConfig(file=options.config)
+            try:
+                config = process.readConfig()
+                path = config[0]
+                size = config[1]
+                print "Using %s, path=%s, size=%s" % \
+                        (options.config, path,size)
+                start = LitenBaseClass(path, size)
+                start.diskWalker()
+                sys.exit(0)
+            except Exception, err:
+                print "Problem parsing config file: %s" % options.config
+                print err
+                sys.exit(0)
+
         if options.quiet:
             verbose = False
         else:
@@ -497,7 +540,7 @@ class LitenController(object):
             fileSize  = options.size
             reportPath = options.report
             logPath = options.log
-            print logPath
+            #print logPath
             try:
                 start = LitenBaseClass(spath, fileSize, reportPath=reportPath,
                 logPath=logPath,
