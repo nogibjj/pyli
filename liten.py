@@ -42,6 +42,21 @@ Generate custom log path using -l or --log=/tmp/liten.log:
 By default a log will be created in CWD named with USER environmental
 variable appended to the front, such as ngift.liten.log
 
+CONFIG FILE:
+
+You can use a config file in the following format:
+
+[Options]
+path=/Users/ngift
+size=1MB
+
+You can call the config file anything and place it anywhere, but it
+only takes path and size for now.
+
+Here is an example usage:
+
+./liten.py --config=myconfig.ini
+
 VERBOSITY:
 
 All stdout can be suppressed by using --quiet or -q.
