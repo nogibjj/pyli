@@ -1,3 +1,7 @@
+02/18/2008
+Added simple config file support option to allow path and size to be set.
+
+
 02/11/2008
 Fixed the hardcorded log location issue.
 The default log location is username.liten.log. This allows multiple users to
