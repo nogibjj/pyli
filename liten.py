@@ -543,7 +543,7 @@ class LitenController(object):
             except Exception, err:
                 print "Problem parsing config file: %s" % options.config
                 print err
-                sys.exit(0)
+                sys.exit(1)
 
         if options.quiet:
             verbose = False
@@ -565,7 +565,7 @@ class LitenController(object):
             except UnboundLocalError, err:
                 print "Invalid Search Size Parameter: %s run --help for help"\
                 % fileSize
-                sys.exit(0)
+                sys.exit(1)
 
         else:
             p.print_help()
