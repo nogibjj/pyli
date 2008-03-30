@@ -66,7 +66,7 @@ You can use a config file in the following format::
 	delete=True
 
 
-You can call the config file anything and place it anywhere. 
+You can call the config file anything and place it anywhere.
 
 Here is an example usage::
 
@@ -98,8 +98,8 @@ Example Library/API Usage:
     >>> checksumOne == checksumThree
     False
 
-There is also the concept of an Action, which can be implemented later, that will allow 
-customizable actions to occur upon an a condition that gets defined as you walk down a 
+There is also the concept of an Action, which can be implemented later, that will allow
+customizable actions to occur upon an a condition that gets defined as you walk down a
 tree of files.
 
 Tests:
@@ -576,7 +576,7 @@ class LitenController(object):
 
         p = optparse.OptionParser(description=descriptionMessage,
                                     prog='liten',
-                                    version='liten 0.1.3',
+                                    version='liten 0.1.4',
                                     usage= '%prog [starting directory] [options]')
         p.add_option('--config', '-c',
                     help='Path to read in config file')
