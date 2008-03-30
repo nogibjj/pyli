@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-#03/29/08
-#Liten 0.1.4.0
+#03/30/08
+#Liten 0.1.4.1
 #A Deduplication Tool
 #Author:  Noah Gift
 #License:  MIT License
@@ -592,8 +592,7 @@ class LitenController(object):
         p.add_option('--quiet', '-q', action="store_true",
                     help='Suppresses all STDOUT.',default=False)
         p.add_option('--delete', '-d', action="store_true",
-                    help='DELETES all duplicate matches\
-                    permanently.',default=False)
+                    help='DELETES all duplicate matches permanently!',default=False)
         p.add_option('--dry-run', action="store_true",
                     help='simulates deleting files. Requires\
                     the --delete option',
