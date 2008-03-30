@@ -593,8 +593,7 @@ class LitenController(object):
                     help='Suppresses all STDOUT.',default=False)
         p.add_option('--delete', '-d', action="store_true",
                     help='DELETES all duplicate matches\
-                    permanently.  Use with --dry-run\
-                    to verify before deleting.',default=False)
+                    permanently.',default=False)
         p.add_option('--dry-run', action="store_true",
                     help='simulates deleting files. Requires\
                     the --delete option',
