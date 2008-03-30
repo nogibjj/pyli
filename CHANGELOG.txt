@@ -4,6 +4,10 @@ Added pattern matching to narrow duplicate search.
 Changed API to be simpler and more OO.
 Added config file support for pattern matching.
 Remove has_key syntax for Python 3000 syntax, patt in key.
+Added --delete option
+Removed logging for now, as it was overkill.
+Added config file support for --delete.
+Changed API to allow better customization.
 
 
 03/07/2008

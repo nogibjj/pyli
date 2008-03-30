@@ -33,15 +33,6 @@ Generate custom report path using -r or --report=/tmp/report.txt:
 
 By default a report will be created in CWD, called LitenDuplicateReport.txt.
 
-LOGGING LOCATION:
-
-Generate custom log path using -l or --log=/tmp/liten.log:
-
-./liten.py --log=/tmp/liten.log /Users/ngift/Documents
-
-By default a log will be created in CWD named with USER environmental
-variable appended to the front, such as ngift.liten.log
-
 CONFIG FILE:
 
 You can use a config file in the following format:
@@ -122,7 +113,6 @@ import string
 import time
 import optparse
 import hashlib
-import logging
 import pdb
 import ConfigParser
 from fnmatch import fnmatch
@@ -139,24 +129,43 @@ if __debug__:
         print "%s Print Mode" % MESSAGE
     if LITEN_DEBUG_MODE == 2:
         print "%s pdb Mode" % MESSAGE
+class ActionsMixin(object):
+    """An Actions Mixin Class"""
 
-class LogBase(object):
-
-   def log(self):
-        """
-		Method that performs logging.  Designed to be subclassed
-
-        """
-        #optional pdb Debug Mode
-        if __debug__:
-            if LITEN_DEBUG_MODE == 2:
-                pdb.set_trace()
-
-        logging.basicConfig(level = self.threshold,
-                            format = '%(asctime)s %(levelname)s %(message)s',
-                            filename = self.logPath,
-                            filemode = 'w')
-        return logging
+    def remove(self, file, dryrun=False, interactive=False):
+           """
+           takes a path and deletes file/unlinks
+           """
+           #simulation mode for deletion
+           if dryrun:
+               print "Dry Run:  %s [NOT DELETED]" % file
+               return None
+           else:
+               print "DELETING:  %s" % file
+               try:
+                   status = os.remove(file)
+               except Exception, err:
+                   print err
+                   return status
+          
+           #interactive deletion mode
+           if interactive:
+               input = raw_input("Do you really want to delete %s [N]/Y" % file)
+               if input == "Y":
+                   print "DELETING:  %s" % file
+                   try:
+                       status = os.remove(file)
+                   except Exception, err:
+                       print err
+                       return status
+               elif input == "N":
+                   print "Skipping:  %s" % file
+                   return None
+               else:
+                   print "Skipping:  %s" % file
+                   return None
+    
+                   
 
 class FileAttributes(object):
 
@@ -181,9 +190,8 @@ class FileAttributes(object):
 
         """
         #optional pdb Debug Mode
-        if __debug__:
-            if LITEN_DEBUG_MODE == 2:
-                pdb.set_trace()
+        if LITEN_DEBUG_MODE == 2:
+            pdb.set_trace()
 
         try:
             fp = open(path)
@@ -198,7 +206,8 @@ class FileAttributes(object):
             if self.verbose:
                 print "IO error for %s" % path
             checksum = None
-            self.log().error('IO error for %s' % path)
+            if LITEN_DEBUG_MODE == 1:
+                print 'IO error for %s' % path
         finally:
             if LITEN_DEBUG_MODE:
                 print "Performing checksum on: %s" % path
@@ -215,7 +224,7 @@ class FileAttributes(object):
         """
         (shortname, ext) = os.path.splitext(file)
         return ext
-
+        
     def sizeType(self):
         """
         Calculates size based on input.
@@ -224,9 +233,8 @@ class FileAttributes(object):
         """
 
         #optional pdb Debug Mode
-        if __debug__:
-            if LITEN_DEBUG_MODE == 2:
-                pdb.set_trace()
+        if LITEN_DEBUG_MODE == 2:
+            pdb.set_trace()
 
         patterns = {'bytes': '1',
                     'KB': '1024',
@@ -257,13 +265,18 @@ class FileAttributes(object):
         return byteValue
 
 
-class Liten(FileAttributes, LogBase):
+class Liten(FileAttributes, ActionsMixin):
     """
     A base class for searching a file tree.
 
     Contains several methods for analyzing file objects.
     Main method is diskWalker, which walks filesystem and determines
     duplicates.
+    
+    You may modify the action that occurs when a duplicate is
+    found my either creating an ActionsMixin method, or
+    you can pass Liten a function that takes a file argument
+    and process that file object.
 
     >>> Liten = Liten(spath='testData')
     >>> fakePath = 'testData/testDocOne.txt'
@@ -287,22 +300,18 @@ class Liten(FileAttributes, LogBase):
     '.txt'
 
     """
-
     def __init__(self, spath=None,
                     fileSize='1MB',
 					pattern='*',
                     reportPath="LitenDuplicateReport.txt",
-                    logPath="/tmp/liten.log",
                     config = None,
-                    threshold="logging.INFO",
-                    verbose=True,
-                    log = False):
+                    verbose = True,
+                    delete = False,
+                    action = False):
 
         self.spath = spath
         self.reportPath = reportPath
-        self.logPath = logPath
         self.config = config
-        self.threshold = threshold
         self.fileSize = fileSize
         self.pattern = pattern
         self.verbose = verbose
@@ -312,6 +321,8 @@ class Liten(FileAttributes, LogBase):
         self.confirmed_dup_value = {}
         self.byte_cache = {}
         self.matches = []
+        self.delete = delete
+        self.action = action
 
     def diskWalker(self):
         """Walks Directory Tree Looking at Every File, while performing a
@@ -340,9 +351,8 @@ class Liten(FileAttributes, LogBase):
         #Local Variables
         report = open(self.reportPath, 'w')
         main_path = os.walk(self.spath)
-        if __debug__:
-            if LITEN_DEBUG_MODE == 1:
-                print "self.sizeType() %s" % self.sizeType()
+        if LITEN_DEBUG_MODE == 1:
+            print "self.sizeType() %s" % self.sizeType()
         byteSizeThreshold = self.sizeType()
         dupNumber=0
         byte_count=0
@@ -369,8 +379,8 @@ class Liten(FileAttributes, LogBase):
                                 print "Matches: %s" % path
                             
                             if self.byte_size in self.byte_cache:
-                                #start debug logging
-                                self.log().debug('Doing checksum on %s' % path)
+                                if LITEN_DEBUG_MODE == 1:
+                                    print 'Doing checksum on %s' % path
                                 
                                 #print "Doing checksum on %s" % path
                                 checksum = self.createChecksum(path)
@@ -406,7 +416,14 @@ class Liten(FileAttributes, LogBase):
                                     #Write duplicate line
                                     report.write("%s, %s, %s MB, %s\n" % ("Duplicate",\
                                     path, self.byte_size/1048576, dupeModDate))
-
+                                     
+                                    #Runtime Decision
+                                    if self.action:
+                                        self.action(path)
+                                    else:
+                                        if self.delete:
+                                            self.remove(path)
+                                   
                                     #Note this is a good spot for the dup rec count
                                     self.confirmed_dup_key[orig_path] = self.checksum_cache_value
 
@@ -516,10 +533,6 @@ class LitenController(object):
             if LITEN_DEBUG_MODE == 2:
                 pdb.set_trace()
 
-        #variables for logger
-        USER = os.environ.get("USER")
-        log = "%s.%s" % (USER, "liten.log")
-
         descriptionMessage = """
         A command line tool for detecting duplicates using md5 checksums.
         """
@@ -541,12 +554,17 @@ class LitenController(object):
                     default='*')            
         p.add_option('--quiet', '-q', action="store_true",
                     help='Suppresses all STDOUT.',default=False)
+        p.add_option('--delete', '-d', action="store_true",
+                    help='DELETES all duplicate matches\
+                    permanently.  Use with --dry-run\
+                    to verify before deleting.',default=False)
+        p.add_option('--dry-run', action="store_true",
+                    help='simulates deleting files. Requires\
+                    the --delete option',
+                    default=False)            
         p.add_option('--report', '-r',
                     help='Path to store duplication report. Default CWD',
                     default='LitenDeplicationReport.csv')
-        p.add_option('--log', '-l',
-                    help='Path to write to logfile. Default CWD',
-                    default=log)
         p.add_option('--test', '-t', action="store_true",help='Runs doctest.')
 
         options, arguments = p.parse_args()
@@ -584,18 +602,18 @@ class LitenController(object):
         else:
             verbose = True
         if len(arguments) == 1:
-            #print options.pattern, type(options.pattern)
             try:
                 start = Liten(spath = arguments[0], 
                             fileSize = options.size,
                             pattern = options.pattern,  
                             reportPath=options.report,
-                            logPath=options.log,
-                            verbose=verbose)
+                            verbose=verbose,
+                            delete = options.delete)
                 start.diskWalker()
             #Here I catch bogus size input exceptions
             except UnboundLocalError, err:
-                if verbose:
+                print err
+                if LITEN_DEBUG_MODE == 1:
                     print "Error: %s" % err
                 print "Invalid Search Size Parameter: %s run --help for help"\
                 % options.size
