@@ -75,7 +75,7 @@ setup(
       	delete=True
 
 
-      You can call the config file anything and place it anywhere. 
+      You can call the config file anything and place it anywhere.
 
       Here is an example usage::
 
@@ -107,8 +107,8 @@ setup(
           >>> checksumOne == checksumThree
           False
 
-      There is also the concept of an Action, which can be implemented later, that will allow 
-      customizable actions to occur upon an a condition that gets defined as you walk down a 
+      There is also the concept of an Action, which can be implemented later, that will allow
+      customizable actions to occur upon an a condition that gets defined as you walk down a
       tree of files.
 
       Tests:
@@ -150,23 +150,8 @@ setup(
       QUESTIONS:  noah dot gift at gmail.com
       ------------------------------------------------------
 
-"""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-author='Noah Gift',
+""",
+      author='Noah Gift',
       author_email='noah.gift@gmail.com',
       url='http://code.google.com/p/liten/',
       license='MIT',
