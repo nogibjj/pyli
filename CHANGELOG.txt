@@ -8,7 +8,8 @@ Added --delete option
 Removed logging for now, as it was overkill.
 Added config file support for --delete.
 Changed API to allow better customization.
-
+Added proper ReStructuredText Docs.
+Changed Version to reflect major changes 0.1.40 release
 
 03/07/2008
 Changed sys.exit(0) to be sys.exit(1) for exceptions that exit application
