@@ -14,7 +14,7 @@ except ImportError:
 setup(
 
       name='liten',
-      version='0.1.3',
+      version='0.1.4.0',
       description='a de-duplication command line tool',
       long_description="""
       Liten:  A deduplication command line tool and library
