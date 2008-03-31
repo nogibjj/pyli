@@ -1,3 +1,8 @@
+03/30/2008
+I have not implemented a --dry-run or a --interactive option that depends on --delete
+yet.  I had to remove references to them in the CLI though.  The final fix for this
+is release 0.1.4.2
+
 03/29/2008
 Cleanup up cruft.
 Added pattern matching to narrow duplicate search.

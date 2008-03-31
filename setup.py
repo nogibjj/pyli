@@ -11,7 +11,7 @@ except ImportError:
     from setuptools import setup, find_packages
 import os,sys
 
-version = '0.1.4.1'
+version = '0.1.4.2'
 f = open(os.path.join(os.path.dirname(__file__), 'docs', 'index.txt'))
 long_description = f.read().strip()
 f.close()
@@ -19,7 +19,7 @@ f.close()
 setup(
 
       name='liten',
-      version='0.1.4.1',
+      version='0.1.4.2',
       description='a de-duplication command line tool',
       long_description=long_description,
       classifiers=[
