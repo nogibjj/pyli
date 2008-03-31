@@ -593,10 +593,6 @@ class LitenController(object):
                     help='Suppresses all STDOUT.',default=False)
         p.add_option('--delete', '-d', action="store_true",
                     help='DELETES all duplicate matches permanently!',default=False)
-        p.add_option('--dry-run', action="store_true",
-                    help='simulates deleting files. Requires\
-                    the --delete option',
-                    default=False)
         p.add_option('--report', '-r',
                     help='Path to store duplication report. Default CWD',
                     default='LitenDeplicationReport.csv')
