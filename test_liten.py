@@ -4,7 +4,7 @@ import unittest
 import doctest
 from doctest import DocTestSuite
 
-from liten import LitenBaseClass, LitenController
+from liten import Liten, LitenController
 
 class TestLitenBaseClass(unittest.TestCase):
     """Tests for LitenBaseClass Class."""
@@ -27,68 +27,68 @@ class TestLitenBaseClass(unittest.TestCase):
 
     def testModDate(self):
         """Test modDate method."""
-        Liten = LitenBaseClass(spath='testData')
-        modDate = Liten.makeModDate(self.fakePath)
+        liten = Liten(spath='testData')
+        modDate = liten.makeModDate(self.fakePath)
 
     def testCreateDate(self):
         """Test createDate method."""
-        Liten = LitenBaseClass(spath='testData')
-        createDate = Liten.makeCreateDate(self.fakePath)
+        liten = Liten(spath='testData')
+        createDate = liten.makeCreateDate(self.fakePath)
 
     def badChecksumDetection(self):
         """Bad Checksum Detection Should Raise Exception."""
-        Liten = LitenBaseClass(spath='testData')
-        badChecksumAttempt = Liten.createChecksum('fileNotFound.txt')
+        liten = Liten(spath='testData')
+        badChecksumAttempt = liten.createChecksum('fileNotFound.txt')
 
 
     def testDupeFileDetection(self):
         """Test detection of duplicate files"""
-        Liten = LitenBaseClass(spath='testData')
-        checksumOne = Liten.createChecksum(self.dupeFileOne)
-        checksumTwo = Liten.createChecksum(self.dupeFileTwo)
+        liten = Liten(spath='testData')
+        checksumOne = liten.createChecksum(self.dupeFileOne)
+        checksumTwo = liten.createChecksum(self.dupeFileTwo)
         self.assertEqual(checksumOne, checksumTwo)
 
     def testDupeFileDetectionError(self):
         """Test detection of Non-duplicate files"""
-        Liten = LitenBaseClass(spath='testData')
-        checksumOne = Liten.createChecksum(self.dupeFileOne)
-        checksumThree= Liten.createChecksum(self.nonDupeFile)
+        liten = Liten(spath='testData')
+        checksumOne = liten.createChecksum(self.dupeFileOne)
+        checksumThree= liten.createChecksum(self.nonDupeFile)
         self.assertNotEqual(checksumOne, checksumThree)
 
     def testCreateExt(self):
         """Test Create Extension Method."""
-        Liten = LitenBaseClass(spath='testData')
-        createExt = Liten.createExt(self.dupeFileOne)
+        liten = Liten(spath='testData')
+        createExt = liten.createExt(self.dupeFileOne)
         self.assertEqual(createExt, ".txt")
 
     def testByteSizeType(self):
         """Tests ByteSize Calculations based on Input."""
-        Liten = LitenBaseClass(spath='testData', fileSize=self.byteFileSize)
-        byteSizeType = Liten.sizeType()
+        liten = Liten(spath='testData', fileSize=self.byteFileSize)
+        byteSizeType = liten.sizeType()
         self.assertEqual(byteSizeType, 1)
 
     def testKByteSizeType(self):
         """Tests KBSize Calculations based on Input."""
-        Liten = LitenBaseClass(spath='testData', fileSize=self.KBFileSize)
-        KBSizeType = Liten.sizeType()
+        liten = Liten(spath='testData', fileSize=self.KBFileSize)
+        KBSizeType = liten.sizeType()
         self.assertEqual(KBSizeType, 1024)
 
     def testMBByteSizeType(self):
         """Tests MBSize Calculations based on Input."""
-        Liten = LitenBaseClass(spath='testData', fileSize=self.MBFileSize)
-        MBSizeType = Liten.sizeType()
+        liten = Liten(spath='testData', fileSize=self.MBFileSize)
+        MBSizeType = liten.sizeType()
         self.assertEqual(MBSizeType, 1048576)
 
     def testGBSizeType(self):
         """Tests GBSize Calculations based on Input."""
-        Liten = LitenBaseClass(spath='testData', fileSize=self.GBFileSize)
-        GBSizeType = Liten.sizeType()
+        liten = Liten(spath='testData', fileSize=self.GBFileSize)
+        GBSizeType = liten.sizeType()
         self.assertEqual(GBSizeType, 1073741824)
 
     def testTBSizeType(self):
         """Tests TBSize Calculations based on Input."""
-        Liten = LitenBaseClass(spath='testData', fileSize=self.TBFileSize)
-        TBSizeType = Liten.sizeType()
+        liten = Liten(spath='testData', fileSize=self.TBFileSize)
+        TBSizeType = liten.sizeType()
         self.assertEqual(TBSizeType, 1099511627776)
 
     def testNoQualifier(self):
@@ -96,8 +96,8 @@ class TestLitenBaseClass(unittest.TestCase):
 
         Should convert No Qualifiers to MB
         """
-        Liten = LitenBaseClass(spath='testData', fileSize=self.NoQualifier)
-        NoSizeType = Liten.sizeType()
+        liten = Liten(spath='testData', fileSize=self.NoQualifier)
+        NoSizeType = liten.sizeType()
 
     def testBogus(self):
         """Tests Bogus Size Input.
@@ -105,8 +105,8 @@ class TestLitenBaseClass(unittest.TestCase):
         Should raise exception UnboundLocalError or fail
         """
         try:
-            Liten = LitenBaseClass(spath='testData', fileSize=self.Bogus)
-            BogusType = Liten.sizeType()
+            liten = Liten(spath='testData', fileSize=self.Bogus)
+            BogusType = liten.sizeType()
         except UnboundLocalError:
             pass
 
