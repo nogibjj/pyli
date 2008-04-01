@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.4: http://docutils.sourceforge.net/" />
+<title>Liten:  A deduplication command line tool and library</title>
+<meta name="author" content="Noah Gift" />
+<meta name="copyright" content="This document has been placed in the public domain." />
+<style type="text/css">
+
+/*
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Date: $Date: 2005-12-18 01:56:14 +0100 (Sun, 18 Dec 2005) $
+:Revision: $Revision: 4224 $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin-left: 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left {
+  clear: left }
+
+img.align-right {
+  clear: right }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font-family: serif ;
+  font-size: 100% }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em ;
+  background-color: #eeeeee }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+tt.docutils {
+  background-color: #eeeeee }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="liten-a-deduplication-command-line-tool-and-library">
+<h1 class="title">Liten:  A deduplication command line tool and library</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Noah Gift</td></tr>
+<tr><th class="docinfo-name">Version:</th>
+<td>0.1.4.0</td></tr>
+<tr><th class="docinfo-name">Copyright:</th>
+<td>This document has been placed in the public domain.</td></tr>
+</tbody>
+</table>
+<div class="section">
+<h1><a class="toc-backref" href="#id1" id="summary" name="summary">Summary</a></h1>
+<p>A deduplication command line tool and library.  A relatively efficient
+algorithm based on filtering like sized bytes, and then performing a full
+md5 checksum, is used to determine duplicate files/file objects.  Files can be deleted upon
+discovery, and pattern matching can be used to limit search results. Finally, configuration file
+use is supported, and there is a developing API that lends itself to customization via an
+ActionsMixin class.</p>
+<div class="contents topic">
+<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#summary" id="id1" name="id1">Summary</a></li>
+<li><a class="reference" href="#example-cli-usage" id="id2" name="id2">Example CLI Usage:</a><ul>
+<li><a class="reference" href="#size" id="id3" name="id3">Size:</a></li>
+<li><a class="reference" href="#report-location" id="id4" name="id4">Report Location:</a></li>
+<li><a class="reference" href="#config-file" id="id5" name="id5">Config File:</a></li>
+<li><a class="reference" href="#verbosity" id="id6" name="id6">Verbosity:</a></li>
+<li><a class="reference" href="#delete" id="id7" name="id7">Delete:</a></li>
+<li><a class="reference" href="#example-library-api-usage" id="id8" name="id8">Example Library/API Usage:</a></li>
+<li><a class="reference" href="#tests" id="id9" name="id9">Tests:</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#display-options" id="id10" name="id10">Display Options:</a><ul>
+<li><a class="reference" href="#stdout" id="id11" name="id11">Stdout:</a></li>
+<li><a class="reference" href="#report" id="id12" name="id12">Report:</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#debug-mode-environmental-variables" id="id13" name="id13">Debug Mode Environmental Variables:</a></li>
+<li><a class="reference" href="#questions-noah-dot-gift-at-gmail-com" id="id14" name="id14">QUESTIONS:  noah dot gift at gmail.com</a></li>
+</ul>
+</div>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id2" id="example-cli-usage" name="example-cli-usage">Example CLI Usage:</a></h1>
+<div class="section">
+<h2><a class="toc-backref" href="#id3" id="size" name="size">Size:</a></h2>
+<p>Search by size using --size or -s option:</p>
+<pre class="literal-block">
+liten.py -s 1 /mnt/raid         is equal to liten.py -s 1MB /mnt/raid
+liten.py -s 1bytes /mnt/raid
+liten.py -s 1KB /mnt/raid
+liten.py -s 1MB /mnt/raid
+liten.py -s 1GB /mnt/raid
+liten.py -s 1TB /mnt/raid
+</pre>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id4" id="report-location" name="report-location">Report Location:</a></h2>
+<p>Generate custom report path using -r or --report=/tmp/report.txt:</p>
+<pre class="literal-block">
+./liten.py --report=/tmp/test.txt /Users/ngift/Documents
+</pre>
+<p>By default a report will be created in CWD, called LitenDuplicateReport.txt.</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id5" id="config-file" name="config-file">Config File:</a></h2>
+<p>You can use a config file in the following format:</p>
+<pre class="literal-block">
+[Options]
+path=/tmp
+size=1MB
+pattern=*.m4v
+delete=True
+</pre>
+<p>You can call the config file anything and place it anywhere.</p>
+<p>Here is an example usage:</p>
+<pre class="literal-block">
+./liten.py --config=myconfig.ini
+</pre>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id6" id="verbosity" name="verbosity">Verbosity:</a></h2>
+<p>All stdout can be suppressed by using --quiet or -q.</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id7" id="delete" name="delete">Delete:</a></h2>
+<p>By using --delete the duplicate files will be automatically deleted.  The API has support
+for an interactive mode and a dry-run mode, they have not been implemented in the CLI as of yet.</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id8" id="example-library-api-usage" name="example-library-api-usage">Example Library/API Usage:</a></h2>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; Liten = Liten(spath='testData')
+&gt;&gt;&gt; dupeFileOne = 'testData/testDocOne.txt'
+&gt;&gt;&gt; checksumOne = Liten.createChecksum(dupeFileOne)
+&gt;&gt;&gt; dupeFileTwo = 'testData/testDocTwo.txt'
+&gt;&gt;&gt; checksumTwo = Liten.createChecksum(dupeFileTwo)
+&gt;&gt;&gt; nonDupeFile = 'testData/testDocThree_wrong_match.txt'
+&gt;&gt;&gt; checksumThree = Liten.createChecksum(nonDupeFile)
+&gt;&gt;&gt; checksumOne == checksumTwo
+True
+&gt;&gt;&gt; checksumOne == checksumThree
+False
+</pre>
+</blockquote>
+<p>There is also the concept of an Action, which can be implemented later, that will allow
+customizable actions to occur upon an a condition that gets defined as you walk down a
+tree of files.</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id9" id="tests" name="tests">Tests:</a></h2>
+<blockquote>
+<ul>
+<li><p class="first">Run Doctests:  ./liten -t or --test</p>
+</li>
+<li><p class="first">Run test_liten.py</p>
+</li>
+<li><dl class="first docutils">
+<dt>Run test_create_file.py then delete those test files using liten::</dt>
+<dd><p class="first last">python2.5 liten.py --delete /tmp</p>
+</dd>
+</dl>
+</li>
+</ul>
+</blockquote>
+</div>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id10" id="display-options" name="display-options">Display Options:</a></h1>
+<div class="section">
+<h2><a class="toc-backref" href="#id11" id="stdout" name="stdout">Stdout:</a></h2>
+<p>stdout will show you duplicate file paths and sizes such as:</p>
+<pre class="literal-block">
+Printing dups over 1 MB using md5 checksum: [SIZE] [ORIG] [DUP]
+7 MB  Orig:  /Users/ngift/Downloads/bzr-0-2.17.tar
+Dupe:  /Users/ngift/Downloads/bzr-0-4.17.tar
+</pre>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id12" id="report" name="report">Report:</a></h2>
+<p>A report named LitenDuplicateReport.txt will be created in your current working
+directory:</p>
+<pre class="literal-block">
+Duplicate Version,     Path,       Size,       ModDate
+Original, /Users/ngift/Downloads/bzr-0-2.17.tar, 7 MB, 07/10/2007 01:43:12 AM
+Duplicate, /Users/ngift/Downloads/bzr-0-3.17.tar, 7 MB, 07/10/2007 01:43:27 AM
+</pre>
+</div>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id13" id="debug-mode-environmental-variables" name="debug-mode-environmental-variables">Debug Mode Environmental Variables:</a></h1>
+<ul class="simple">
+<li>To enable print statement debugging set LITEN_DEBUG to 1</li>
+<li>To enable pdb break point debugging set LITEN_DEBUG to 2</li>
+<li>LITEN_DEBUG_MODE = int(os.environ.get('LITEN_DEBUG', 0))</li>
+<li>Note:  When DEBUG MODE is enabled, a message will appear to standard out</li>
+</ul>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id14" id="questions-noah-dot-gift-at-gmail-com" name="questions-noah-dot-gift-at-gmail-com">QUESTIONS:  noah dot gift at gmail.com</a></h1>
+</div>
+</div>
+</body>
+</html>
