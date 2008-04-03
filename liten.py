@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-#03/30/08
-#Liten 0.1.4.1
+#04/02/08
+#Liten 0.1.4.3
 #A Deduplication Tool
 #Author:  Noah Gift
 #License:  MIT License
