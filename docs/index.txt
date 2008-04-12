@@ -74,7 +74,7 @@ By using --delete the duplicate files will be automatically deleted.  The API ha
 for an interactive mode and a dry-run mode, they have not been implemented in the CLI as of yet.
 
 Example Library/API Usage:
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     >>> Liten = Liten(spath='testData')
     >>> dupeFileOne = 'testData/testDocOne.txt'
