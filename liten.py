@@ -52,7 +52,7 @@ Generate custom report path using -r or --report=/tmp/report.txt::
 
 	./liten.py --report=/tmp/test.txt /Users/ngift/Documents
 
-By default a report will be created in CWD, called LitenDuplicateReport.txt.
+By default a report will be created in CWD, called LitenDuplicateReport.csv
 
 Config File:
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -122,7 +122,7 @@ stdout will show you duplicate file paths and sizes such as::
 
 Report:
 ~~~~~~~~~~~~~~~~~~~~~~
-A report named LitenDuplicateReport.txt will be created in your current working
+A report named LitenDuplicateReport.csv will be created in your current working
 directory::
 
 	Duplicate Version,     Path,       Size,       ModDate
@@ -339,8 +339,8 @@ class Liten(FileAttributes, ActionsMixin):
     """
     def __init__(self, spath=None,
                     fileSize='1MB',
-					pattern='*',
-                    reportPath="LitenDuplicateReport.txt",
+                    pattern='*',
+                    reportPath="LitenDuplicateReport.csv",
                     config = None,
                     verbose = True,
                     delete = False,
@@ -363,7 +363,7 @@ class Liten(FileAttributes, ActionsMixin):
 
     def diskWalker(self):
         """Walks Directory Tree Looking at Every File, while performing a
-        duplication match algorithm.
+        duplicate match algorithm.
 
         Algorithm:
         This divides directory walk into doing either a more informed search
@@ -594,8 +594,8 @@ class LitenController(object):
         p.add_option('--delete', '-d', action="store_true",
                     help='DELETES all duplicate matches permanently!',default=False)
         p.add_option('--report', '-r',
-                    help='Path to store duplication report. Default CWD',
-                    default='LitenDeplicationReport.csv')
+                    help='Path to store duplicate report. Default CWD',
+                    default='LitenDuplicateReport.csv')
         p.add_option('--test', '-t', action="store_true",help='Runs doctest.')
 
         options, arguments = p.parse_args()
