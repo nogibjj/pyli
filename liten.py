@@ -281,9 +281,10 @@ class FileAttributes(object):
 
         #Detects File Size Type, Strips off Characters
         #Converts value to bytes
-        for key in patterns:
-            value = patterns[key]
-            try:
+        try:
+            for key in patterns:
+                value = patterns[key]
+
                 #print self.fileSize
                 if re.search(key, self.fileSize):
                     if LITEN_DEBUG_MODE:
@@ -291,14 +292,15 @@ class FileAttributes(object):
                         print "Value: %s " % value
                     byteValue = int(self.fileSize.strip(key)) * int(value)
                     #print "Converted byte value: %s " % byteValue
-                else:
-                    byteValue = int(self.fileSize.strip()) * int(1048576)
-                    #print "Converted byte value: %s " % byteValue
-            except Exception, err:
-                if LITEN_DEBUG_MODE:
-                    print "Problem evaluating:", self.fileSize, Exception, err
-                else:
-                    pass    #Note this gets caught using optparse which is cleaner
+                    break
+            else:
+                byteValue = int(self.fileSize.strip()) * int(1048576)
+                #print "Converted byte value: %s " % byteValue
+        except Exception, err:
+            if LITEN_DEBUG_MODE:
+                print "Problem evaluating:", self.fileSize, Exception, err
+            else:
+                pass    #Note this gets caught using optparse which is cleaner
         return byteValue
 
 

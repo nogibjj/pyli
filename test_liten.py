@@ -42,14 +42,14 @@ class TestLitenBaseClass(unittest.TestCase):
 
 
     def testDupeFileDetection(self):
-        """Test detection of duplicate files"""
+        """Test checksum of duplicate files"""
         liten = Liten(spath='testData')
         checksumOne = liten.createChecksum(self.dupeFileOne)
         checksumTwo = liten.createChecksum(self.dupeFileTwo)
         self.assertEqual(checksumOne, checksumTwo)
 
     def testDupeFileDetectionError(self):
-        """Test detection of Non-duplicate files"""
+        """Test checksum of Non-duplicate files"""
         liten = Liten(spath='testData')
         checksumOne = liten.createChecksum(self.dupeFileOne)
         checksumThree= liten.createChecksum(self.nonDupeFile)
