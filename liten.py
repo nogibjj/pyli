@@ -354,6 +354,7 @@ class Liten(FileAttributes, ActionsMixin):
         self.fileSize = fileSize
         self.pattern = pattern
         self.verbose = verbose
+        #: first checksum only dict
         self.checksum_cache_key = {}
         self.checksum_cache_value = {}
         self.confirmed_dup_key = {}
@@ -362,6 +363,21 @@ class Liten(FileAttributes, ActionsMixin):
         self.matches = []
         self.delete = delete
         self.action = action
+
+        self.dupNumber = 0
+
+    def _cacheChecksum(self, path, checksum, byteSize, file):
+
+        checksum_cache_value = {'fullPath': path,
+                                    'checksum': checksum,
+                                    'modDate': self.makeCreateDate(path),
+                                    'dupNumber': self.dupNumber,
+                                    'searchDate': self.createSearchDate(),
+                                    'bytes': byteSize,
+                                    'fileType': None,
+                                    'fileExt': self.createExt(file)}
+
+        self.checksum_cache_key[checksum]=checksum_cache_value
 
     def diskWalker(self):
         """Walks Directory Tree Looking at Every File, while performing a
@@ -380,6 +396,10 @@ class Liten(FileAttributes, ActionsMixin):
         >>> Liten = Liten(spath='testData', verbose=False)
         >>> Liten.diskWalker()
         {}
+        >>> Liten.fileSize="45bytes"
+        >>> dupes = Liten.diskWalker()
+        >>> print len(dupes)
+        4
 
         """
         #optional pdb Debug Mode
@@ -393,7 +413,7 @@ class Liten(FileAttributes, ActionsMixin):
         if LITEN_DEBUG_MODE == 1:
             print "self.sizeType() %s" % self.sizeType()
         byteSizeThreshold = self.sizeType()
-        dupNumber=0
+        self.dupNumber=0
         byte_count=0
         record_count=0
 
@@ -408,28 +428,55 @@ class Liten(FileAttributes, ActionsMixin):
             for file in files:
                 path = os.path.join(root,file)      #establishes full path
                 if os.path.isfile(path):            #ignores symbolic links
-                    self.byte_size = os.path.getsize(path)
+                    byte_size = os.path.getsize(path)
                     #gets number of file examined
                     record_count += 1
                     #File Size, Pattern Filter Section
-                    if self.byte_size >= byteSizeThreshold:
+                    if byte_size >= byteSizeThreshold:
                         if fnmatch(path, self.pattern):		#default * match
                             if LITEN_DEBUG_MODE == 1:
                                 print "Matches: %s" % path
 
-                            if self.byte_size in self.byte_cache:
+                            if byte_size not in self.byte_cache:
+                                self.byte_cache[byte_size] = {
+                                    'path':path,
+                                    'checksum':None
+                                }
+
+                            else:
+                                #size matched, process checksums for a given file size
+
                                 if LITEN_DEBUG_MODE == 1:
                                     print 'Doing checksum on %s' % path
 
-                                #print "Doing checksum on %s" % path
                                 checksum = self.createChecksum(path)
 
-                                #checking to see if file has same checksum as checksum cache
-                                if checksum in self.checksum_cache_key:
+                                if checksum not in self.checksum_cache_key:
+                                    orig_path = self.byte_cache[byte_size]['path']
+                                    orig_checksum = self.byte_cache[byte_size]['checksum']
+
+                                    if orig_checksum is None:
+                                        # save original file checksum in byte cache
+                                        orig_checksum = \
+                                            self.byte_cache[byte_size]['checksum'] = \
+                                                self.createChecksum(orig_path)
+
+                                        # save original file record in a checksum cache
+                                        self._cacheChecksum(orig_path, orig_checksum,
+                                                                byte_size,
+                                                                file)
+
+                                #now original file checksum is 100% in checksum cache
+                                #recheck the condition
+                                if checksum not in self.checksum_cache_key:
+                                    self._cacheChecksum(path, checksum, byte_size, file)
+                                    #print "not a Dupe? ", path
+
+                                else: # fill a dupe record
                                     #accumulates bytes of duplicates found
-                                    byte_count += self.byte_size
+                                    byte_count += byte_size
                                     #accumulates a dupNumber record
-                                    dupNumber += 1
+                                    self.dupNumber += 1
 
                                     #print byte_count/1048576, " MB's wasted"
                                     #since we have a match, creating record with match partner
@@ -439,7 +486,7 @@ class Liten(FileAttributes, ActionsMixin):
                                     orig_path = self.checksum_cache_key[checksum]['fullPath']
                                     orig_mod_date = self.checksum_cache_key[checksum]['modDate']
                                     if self.verbose:
-                                        print self.byte_size/1048576, "MB ", "ORIG: ",\
+                                        print byte_size/1048576, "MB ", "ORIG: ",\
                                         orig_path, "DUPE: ", path
 
                                     #write out to report
@@ -447,14 +494,14 @@ class Liten(FileAttributes, ActionsMixin):
                                     Size,       ModDate\n")
                                     #Write original line
                                     report.write("%s, %s, %s MB, %s\n" % ("Original",\
-                                    orig_path, self.byte_size/1048576, orig_mod_date))
+                                    orig_path, byte_size/1048576, orig_mod_date))
 
                                     #Gets Duplicates Modification Date
                                     dupeModDate = self.makeCreateDate(path)
 
                                     #Write duplicate line
                                     report.write("%s, %s, %s MB, %s\n" % ("Duplicate",\
-                                    path, self.byte_size/1048576, dupeModDate))
+                                    path, byte_size/1048576, dupeModDate))
 
                                     #Runtime Decision
                                     if self.action:
@@ -469,40 +516,15 @@ class Liten(FileAttributes, ActionsMixin):
                                     #setrecord for duplicate match stored
                                     #duplicate code clean up later.
                                     confirmed_dup_value = {'fullPath': path,
-                                                            'modDate': modDate,
-                                                            'dupNumber': dupNumber,
-                                                            'searchDate': searchDate,
+                                                            'modDate': dupeModDate,
+                                                            'dupNumber': self.dupNumber,
+                                                            'searchDate': self.createSearchDate(),
                                                             'checksum': checksum,
-                                                            'bytes': self.byte_size,
-                                                            'fileType': fileType,
-                                                            'fileExt': fileExt}
+                                                            'bytes': byte_size,
+                                                            'fileType': None,
+                                                            'fileExt': self.createExt(file)}
                                     self.confirmed_dup_key[path]=confirmed_dup_value
 
-                                else:
-                                    #get checksum of file that has a byte dupe match
-                                    checksum = self.createChecksum(path)
-                                    createDate = self.makeCreateDate(path)
-                                    modDate = self.makeCreateDate(path)
-                                    #Note I already grabbed this earlier
-                                    searchDate = self.createSearchDate()
-                                    fileExt = self.createExt(file)
-                                    fileType = None
-                                    #duplicate code clean up later.
-                                    self.checksum_cache_value = {'fullPath': path,
-                                                                    'modDate': modDate,
-                                                                    'dupNumber': dupNumber,
-                                                                    'searchDate': searchDate,
-                                                                    'checksum': checksum,
-                                                                    'bytes': self.byte_size,
-                                                                    'fileType': fileType,
-                                                                    'fileExt': fileExt}
-
-                                    #creating first checksum only dict.
-                                    self.checksum_cache_key[checksum]=self.checksum_cache_value
-                                    #print "not a Dupe? ", path
-                            else:
-                                self.byte_cache[self.byte_size] = None
-                                #pickle out file_system_record
 
         if self.verbose:
             print "\n"
