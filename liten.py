@@ -1,11 +1,13 @@
 #!/usr/bin/env python
-#04/02/08
-#Liten 0.1.4.3
-#A Deduplication Tool
+#Liten - Deduplication command line tool and library
 #Author:  Noah Gift
 #License:  MIT License
 #http://www.opensource.org/licenses/mit-license.php
 #Copyright (c) 2007,2008 Noah Gift
+
+__version__ = "0.1.4.5"
+__date__ = "2008-12-25"
+
 
 """
 Liten:  A deduplication command line tool and library
@@ -604,7 +606,7 @@ class LitenController(object):
 
         p = optparse.OptionParser(description=descriptionMessage,
                                     prog='liten',
-                                    version='liten 0.1.4',
+                                    version='liten %s' % __version__,
                                     usage= '%prog [options] [starting dir1] [dir2] ...')
         p.add_option('--config', '-c',
                     help='Path to read in config file')
