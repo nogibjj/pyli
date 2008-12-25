@@ -152,6 +152,7 @@ import optparse
 import hashlib
 import pdb
 import ConfigParser
+from itertools import chain
 from fnmatch import fnmatch
 
 #Liten Debug Mode
@@ -409,7 +410,10 @@ class Liten(FileAttributes, ActionsMixin):
 
         #Local Variables
         report = open(self.reportPath, 'w')
-        main_path = os.walk(self.spath)
+        if isinstance(self.spath, basestring):
+            main_path = os.walk(self.spath)
+        else:
+            main_path = chain(*map(os.walk, self.spath))
         if LITEN_DEBUG_MODE == 1:
             print "self.sizeType() %s" % self.sizeType()
         byteSizeThreshold = self.sizeType()
@@ -601,7 +605,7 @@ class LitenController(object):
         p = optparse.OptionParser(description=descriptionMessage,
                                     prog='liten',
                                     version='liten 0.1.4',
-                                    usage= '%prog [starting directory] [options]')
+                                    usage= '%prog [options] [starting dir1] [dir2] ...')
         p.add_option('--config', '-c',
                     help='Path to read in config file')
         p.add_option('--size', '-s',
@@ -656,9 +660,14 @@ class LitenController(object):
             verbose = False
         else:
             verbose = True
-        if len(arguments) == 1:
+        if len(arguments) > 0:
+            for arg in arguments:
+                if not os.path.isdir(arg):
+                   print "Search path does't exist or is not a directory: %s"\
+                   % arg
+                   sys.exit(1)
             try:
-                start = Liten(spath = arguments[0],
+                start = Liten(spath = arguments,
                             fileSize = options.size,
                             pattern = options.pattern,
                             reportPath=options.report,
