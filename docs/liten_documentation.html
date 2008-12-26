@@ -3,17 +3,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>Liten:  A deduplication command line tool and library</title>
 <meta name="author" content="Noah Gift" />
 <meta name="copyright" content="This document has been placed in the public domain." />
 <style type="text/css">
 
 /*
-:Author: David Goodger
-:Contact: goodger@users.sourceforge.net
-:Date: $Date: 2005-12-18 01:56:14 +0100 (Sun, 18 Dec 2005) $
-:Revision: $Revision: 4224 $
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 5196 2007-06-03 20:25:28Z wiemann $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
@@ -119,7 +117,7 @@ div.line-block div.line-block {
   margin-left: 1.5em }
 
 div.sidebar {
-  margin-left: 1em ;
+  margin: 0 0 0.5em 1em ;
   border: medium outset ;
   padding: 1em ;
   background-color: #ffffee ;
@@ -225,8 +223,7 @@ pre.address {
 
 pre.literal-block, pre.doctest-block {
   margin-left: 2em ;
-  margin-right: 2em ;
-  background-color: #eeeeee }
+  margin-right: 2em }
 
 span.classifier {
   font-family: sans-serif ;
@@ -283,9 +280,6 @@ h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
 h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
   font-size: 100% }
 
-tt.docutils {
-  background-color: #eeeeee }
-
 ul.auto-toc {
   list-style-type: none }
 
@@ -301,47 +295,47 @@ ul.auto-toc {
 <tr><th class="docinfo-name">Author:</th>
 <td>Noah Gift</td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>0.1.4.0</td></tr>
+<td>0.1.5</td></tr>
 <tr><th class="docinfo-name">Copyright:</th>
 <td>This document has been placed in the public domain.</td></tr>
 </tbody>
 </table>
-<div class="section">
-<h1><a class="toc-backref" href="#id1" id="summary" name="summary">Summary</a></h1>
+<div class="section" id="summary">
+<h1><a class="toc-backref" href="#id1">Summary</a></h1>
 <p>A deduplication command line tool and library.  A relatively efficient
-algorithm based on filtering like sized bytes, and then performing a full
-md5 checksum, is used to determine duplicate files/file objects.  Files can be deleted upon
-discovery, and pattern matching can be used to limit search results. Finally, configuration file
-use is supported, and there is a developing API that lends itself to customization via an
-ActionsMixin class.</p>
-<div class="contents topic">
-<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
+algorithm based on searching like sized files, and then performing a full md5
+checksum, is used to determine duplicate files/file objects.  Files can be
+deleted upon discovery, and pattern matching can be used to limit search
+results. Finally, configuration file use is supported, and there is a
+developing API that lends itself to customization via an ActionsMixin class.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference" href="#summary" id="id1" name="id1">Summary</a></li>
-<li><a class="reference" href="#example-cli-usage" id="id2" name="id2">Example CLI Usage:</a><ul>
-<li><a class="reference" href="#size" id="id3" name="id3">Size:</a></li>
-<li><a class="reference" href="#report-location" id="id4" name="id4">Report Location:</a></li>
-<li><a class="reference" href="#config-file" id="id5" name="id5">Config File:</a></li>
-<li><a class="reference" href="#verbosity" id="id6" name="id6">Verbosity:</a></li>
-<li><a class="reference" href="#delete" id="id7" name="id7">Delete:</a></li>
-<li><a class="reference" href="#example-library-api-usage" id="id8" name="id8">Example Library/API Usage:</a></li>
-<li><a class="reference" href="#tests" id="id9" name="id9">Tests:</a></li>
+<li><a class="reference internal" href="#summary" id="id1">Summary</a></li>
+<li><a class="reference internal" href="#example-cli-usage" id="id2">Example CLI Usage:</a><ul>
+<li><a class="reference internal" href="#size" id="id3">Size:</a></li>
+<li><a class="reference internal" href="#report-location" id="id4">Report Location:</a></li>
+<li><a class="reference internal" href="#config-file" id="id5">Config File:</a></li>
+<li><a class="reference internal" href="#verbosity" id="id6">Verbosity:</a></li>
+<li><a class="reference internal" href="#delete" id="id7">Delete:</a></li>
+<li><a class="reference internal" href="#example-library-api-usage" id="id8">Example Library/API Usage:</a></li>
+<li><a class="reference internal" href="#tests" id="id9">Tests:</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#display-options" id="id10" name="id10">Display Options:</a><ul>
-<li><a class="reference" href="#stdout" id="id11" name="id11">Stdout:</a></li>
-<li><a class="reference" href="#report" id="id12" name="id12">Report:</a></li>
+<li><a class="reference internal" href="#display-options" id="id10">Display Options:</a><ul>
+<li><a class="reference internal" href="#stdout" id="id11">Stdout:</a></li>
+<li><a class="reference internal" href="#report" id="id12">Report:</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#debug-mode-environmental-variables" id="id13" name="id13">Debug Mode Environmental Variables:</a></li>
-<li><a class="reference" href="#questions-noah-dot-gift-at-gmail-com" id="id14" name="id14">QUESTIONS:  noah dot gift at gmail.com</a></li>
+<li><a class="reference internal" href="#debug-mode-environmental-variables" id="id13">Debug Mode Environmental Variables:</a></li>
+<li><a class="reference internal" href="#questions-noah-dot-gift-at-gmail-com" id="id14">QUESTIONS:  noah dot gift at gmail.com</a></li>
 </ul>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id2" id="example-cli-usage" name="example-cli-usage">Example CLI Usage:</a></h1>
-<div class="section">
-<h2><a class="toc-backref" href="#id3" id="size" name="size">Size:</a></h2>
+<div class="section" id="example-cli-usage">
+<h1><a class="toc-backref" href="#id2">Example CLI Usage:</a></h1>
+<div class="section" id="size">
+<h2><a class="toc-backref" href="#id3">Size:</a></h2>
 <p>Search by size using --size or -s option:</p>
 <pre class="literal-block">
 liten.py -s 1 /mnt/raid         is equal to liten.py -s 1MB /mnt/raid
@@ -349,19 +343,19 @@ liten.py -s 1bytes /mnt/raid
 liten.py -s 1KB /mnt/raid
 liten.py -s 1MB /mnt/raid
 liten.py -s 1GB /mnt/raid
-liten.py -s 1TB /mnt/raid
+liten.py c:\in d:\              is equal to liten.py -s 1MB c:\in d:\
 </pre>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id4" id="report-location" name="report-location">Report Location:</a></h2>
+<div class="section" id="report-location">
+<h2><a class="toc-backref" href="#id4">Report Location:</a></h2>
 <p>Generate custom report path using -r or --report=/tmp/report.txt:</p>
 <pre class="literal-block">
 ./liten.py --report=/tmp/test.txt /Users/ngift/Documents
 </pre>
-<p>By default a report will be created in CWD, called LitenDuplicateReport.txt.</p>
+<p>By default a report will be created in CWD, called LitenDuplicateReport.csv</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id5" id="config-file" name="config-file">Config File:</a></h2>
+<div class="section" id="config-file">
+<h2><a class="toc-backref" href="#id5">Config File:</a></h2>
 <p>You can use a config file in the following format:</p>
 <pre class="literal-block">
 [Options]
@@ -376,17 +370,18 @@ delete=True
 ./liten.py --config=myconfig.ini
 </pre>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id6" id="verbosity" name="verbosity">Verbosity:</a></h2>
+<div class="section" id="verbosity">
+<h2><a class="toc-backref" href="#id6">Verbosity:</a></h2>
 <p>All stdout can be suppressed by using --quiet or -q.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id7" id="delete" name="delete">Delete:</a></h2>
-<p>By using --delete the duplicate files will be automatically deleted.  The API has support
-for an interactive mode and a dry-run mode, they have not been implemented in the CLI as of yet.</p>
+<div class="section" id="delete">
+<h2><a class="toc-backref" href="#id7">Delete:</a></h2>
+<p>By using --delete the duplicate files will be automatically deleted.  The API
+has support for an interactive mode and a dry-run mode, they have not been
+implemented in the CLI as of yet.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id8" id="example-library-api-usage" name="example-library-api-usage">Example Library/API Usage:</a></h2>
+<div class="section" id="example-library-api-usage">
+<h2><a class="toc-backref" href="#id8">Example Library/API Usage:</a></h2>
 <blockquote>
 <pre class="doctest-block">
 &gt;&gt;&gt; Liten = Liten(spath='testData')
@@ -402,12 +397,12 @@ True
 False
 </pre>
 </blockquote>
-<p>There is also the concept of an Action, which can be implemented later, that will allow
-customizable actions to occur upon an a condition that gets defined as you walk down a
-tree of files.</p>
+<p>There is also the concept of an Action, which can be implemented later, that
+will allow customizable actions to occur upon an a condition that gets defined
+as you walk down a tree of files.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id9" id="tests" name="tests">Tests:</a></h2>
+<div class="section" id="tests">
+<h2><a class="toc-backref" href="#id9">Tests:</a></h2>
 <blockquote>
 <ul>
 <li><p class="first">Run Doctests:  ./liten -t or --test</p>
@@ -424,10 +419,10 @@ tree of files.</p>
 </blockquote>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id10" id="display-options" name="display-options">Display Options:</a></h1>
-<div class="section">
-<h2><a class="toc-backref" href="#id11" id="stdout" name="stdout">Stdout:</a></h2>
+<div class="section" id="display-options">
+<h1><a class="toc-backref" href="#id10">Display Options:</a></h1>
+<div class="section" id="stdout">
+<h2><a class="toc-backref" href="#id11">Stdout:</a></h2>
 <p>stdout will show you duplicate file paths and sizes such as:</p>
 <pre class="literal-block">
 Printing dups over 1 MB using md5 checksum: [SIZE] [ORIG] [DUP]
@@ -435,9 +430,9 @@ Printing dups over 1 MB using md5 checksum: [SIZE] [ORIG] [DUP]
 Dupe:  /Users/ngift/Downloads/bzr-0-4.17.tar
 </pre>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id12" id="report" name="report">Report:</a></h2>
-<p>A report named LitenDuplicateReport.txt will be created in your current working
+<div class="section" id="report">
+<h2><a class="toc-backref" href="#id12">Report:</a></h2>
+<p>A report named LitenDuplicateReport.csv will be created in your current working
 directory:</p>
 <pre class="literal-block">
 Duplicate Version,     Path,       Size,       ModDate
@@ -446,8 +441,8 @@ Duplicate, /Users/ngift/Downloads/bzr-0-3.17.tar, 7 MB, 07/10/2007 01:43:27 AM
 </pre>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id13" id="debug-mode-environmental-variables" name="debug-mode-environmental-variables">Debug Mode Environmental Variables:</a></h1>
+<div class="section" id="debug-mode-environmental-variables">
+<h1><a class="toc-backref" href="#id13">Debug Mode Environmental Variables:</a></h1>
 <ul class="simple">
 <li>To enable print statement debugging set LITEN_DEBUG to 1</li>
 <li>To enable pdb break point debugging set LITEN_DEBUG to 2</li>
@@ -455,8 +450,8 @@ Duplicate, /Users/ngift/Downloads/bzr-0-3.17.tar, 7 MB, 07/10/2007 01:43:27 AM
 <li>Note:  When DEBUG MODE is enabled, a message will appear to standard out</li>
 </ul>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id14" id="questions-noah-dot-gift-at-gmail-com" name="questions-noah-dot-gift-at-gmail-com">QUESTIONS:  noah dot gift at gmail.com</a></h1>
+<div class="section" id="questions-noah-dot-gift-at-gmail-com">
+<h1><a class="toc-backref" href="#id14">QUESTIONS:  noah dot gift at gmail.com</a></h1>
 </div>
 </div>
 </body>

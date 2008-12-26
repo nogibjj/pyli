@@ -1,7 +1,9 @@
 2008-12-25
 techtonik
-Eliminated the bug that Liten needed three duplicates to make match.
-Feature to traverse several dirs supplied in command line.
+0.1.5
+
+* Eliminated the bug that Liten needed three duplicates to make match.
+* Feature to traverse several dirs supplied in command line.
 
 03/30/2008
 I have not implemented a --dry-run or a --interactive option that depends on --delete

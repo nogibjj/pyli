@@ -1,25 +1,20 @@
 #!/usr/bin/env python
 
-# liten 0.1.4 -- deduplication command line tool
-#
-# Author: Noah Gift
+from os.path import dirname,join
 try:
-    from setuptools import setup, find_packages
+    from setuptools import setup
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
-    from setuptools import setup, find_packages
-import os,sys
+    from setuptools import setup
 
-version = '0.1.4.2'
-f = open(os.path.join(os.path.dirname(__file__), 'docs', 'index.txt'))
+f = open(join(dirname(__file__), 'docs', 'index.txt'))
 long_description = f.read().strip()
 f.close()
 
 setup(
-
       name='liten',
-      version='0.1.4.2',
+      version='0.1.5',
       description='a de-duplication command line tool',
       long_description=long_description,
       classifiers=[
@@ -32,12 +27,10 @@ setup(
       url='http://pypi.python.org/pypi/liten',
       download_url="http://code.google.com/p/liten/downloads/list",
       license='MIT',
-      py_modules=['virtualenv'],
       zip_safe=False,
-      py_modules=['liten'],
+      py_modules=['liten', 'test_liten'],
       entry_points="""
       [console_scripts]
       liten = liten:main
       """,
       )
-

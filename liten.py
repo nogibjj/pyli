@@ -5,7 +5,7 @@
 #http://www.opensource.org/licenses/mit-license.php
 #Copyright (c) 2007,2008 Noah Gift
 
-__version__ = "0.1.4.5"
+__version__ = "0.1.5"
 __date__ = "2008-12-25"
 
 
@@ -14,18 +14,18 @@ Liten:  A deduplication command line tool and library
 ===============================================================================
 
 :Author: Noah Gift
-:Version: $Revision: 0.1.4.0 $
+:Version: $Revision: 0.1.5 $
 :Copyright: This document has been placed in the public domain.
 
 Summary
 ---------
 
 A deduplication command line tool and library.  A relatively efficient
-algorithm based on filtering like sized bytes, and then performing a full
-md5 checksum, is used to determine duplicate files/file objects.  Files can be deleted upon
-discovery, and pattern matching can be used to limit search results. Finally, configuration file
-use is supported, and there is a developing API that lends itself to customization via an
-ActionsMixin class.
+algorithm based on searching like sized files, and then performing a full md5
+checksum, is used to determine duplicate files/file objects.  Files can be
+deleted upon discovery, and pattern matching can be used to limit search
+results. Finally, configuration file use is supported, and there is a
+developing API that lends itself to customization via an ActionsMixin class.
 
 
 
@@ -45,7 +45,7 @@ Search by size using --size or -s option::
 	liten.py -s 1KB /mnt/raid
 	liten.py -s 1MB /mnt/raid
 	liten.py -s 1GB /mnt/raid
-	liten.py -s 1TB /mnt/raid
+    liten.py c:\in d:\              is equal to liten.py -s 1MB c:\in d:\
 
 Report Location:
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -82,11 +82,12 @@ All stdout can be suppressed by using --quiet or -q.
 Delete:
 ~~~~~~~~~~~~~~~~~~~~~~
 
-By using --delete the duplicate files will be automatically deleted.  The API has support
-for an interactive mode and a dry-run mode, they have not been implemented in the CLI as of yet.
+By using --delete the duplicate files will be automatically deleted.  The API
+has support for an interactive mode and a dry-run mode, they have not been
+implemented in the CLI as of yet.
 
 Example Library/API Usage:
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     >>> Liten = Liten(spath='testData')
     >>> dupeFileOne = 'testData/testDocOne.txt'
@@ -100,9 +101,9 @@ Example Library/API Usage:
     >>> checksumOne == checksumThree
     False
 
-There is also the concept of an Action, which can be implemented later, that will allow
-customizable actions to occur upon an a condition that gets defined as you walk down a
-tree of files.
+There is also the concept of an Action, which can be implemented later, that
+will allow customizable actions to occur upon an a condition that gets defined
+as you walk down a tree of files.
 
 Tests:
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -611,13 +612,11 @@ class LitenController(object):
         p.add_option('--config', '-c',
                     help='Path to read in config file')
         p.add_option('--size', '-s',
-                    help='File Size Example:  10bytes, 10KB, 10MB,10GB,10TB, or \
+                    help='File Size Example:  10bytes, 10KB, 10MB,10GB,10TB \
                     plain number defaults to MB (1 = 1MB)',
                     default='1MB')
         p.add_option('--pattern', '-p',
-                    help='Pattern Match Examples: *.txt, *.iso, music[0-5].mp3\
-                    plain number defaults to * or match all.  \
-                    Uses UNIX standard wildcard syntax.',
+                    help='Pattern Match Examples: *.txt, *.iso, music[0-5].mp3',
                     default='*')
         p.add_option('--quiet', '-q', action="store_true",
                     help='Suppresses all STDOUT.',default=False)

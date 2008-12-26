@@ -2,18 +2,18 @@ Liten:  A deduplication command line tool and library
 ===============================================================================
 
 :Author: Noah Gift
-:Version: $Revision: 0.1.4.0 $
+:Version: $Revision: 0.1.5 $
 :Copyright: This document has been placed in the public domain.
 
 Summary
 ---------
 
 A deduplication command line tool and library.  A relatively efficient
-algorithm based on filtering like sized bytes, and then performing a full
-md5 checksum, is used to determine duplicate files/file objects.  Files can be deleted upon
-discovery, and pattern matching can be used to limit search results. Finally, configuration file
-use is supported, and there is a developing API that lends itself to customization via an
-ActionsMixin class.
+algorithm based on searching like sized files, and then performing a full md5
+checksum, is used to determine duplicate files/file objects.  Files can be
+deleted upon discovery, and pattern matching can be used to limit search
+results. Finally, configuration file use is supported, and there is a
+developing API that lends itself to customization via an ActionsMixin class.
 
 
 
@@ -33,7 +33,7 @@ Search by size using --size or -s option::
     liten.py -s 1KB /mnt/raid
     liten.py -s 1MB /mnt/raid
     liten.py -s 1GB /mnt/raid
-    liten.py -s 1TB /mnt/raid
+    liten.py c:\in d:\              is equal to liten.py -s 1MB c:\in d:\
 
 Report Location:
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -42,7 +42,7 @@ Generate custom report path using -r or --report=/tmp/report.txt::
 
     ./liten.py --report=/tmp/test.txt /Users/ngift/Documents
 
-By default a report will be created in CWD, called LitenDuplicateReport.txt.
+By default a report will be created in CWD, called LitenDuplicateReport.csv
 
 Config File:
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -70,8 +70,9 @@ All stdout can be suppressed by using --quiet or -q.
 Delete:
 ~~~~~~~~~~~~~~~~~~~~~~
 
-By using --delete the duplicate files will be automatically deleted.  The API has support
-for an interactive mode and a dry-run mode, they have not been implemented in the CLI as of yet.
+By using --delete the duplicate files will be automatically deleted.  The API
+has support for an interactive mode and a dry-run mode, they have not been
+implemented in the CLI as of yet.
 
 Example Library/API Usage:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -88,9 +89,9 @@ Example Library/API Usage:
     >>> checksumOne == checksumThree
     False
 
-There is also the concept of an Action, which can be implemented later, that will allow 
-customizable actions to occur upon an a condition that gets defined as you walk down a 
-tree of files.
+There is also the concept of an Action, which can be implemented later, that
+will allow customizable actions to occur upon an a condition that gets defined
+as you walk down a tree of files.
 
 Tests:
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -112,7 +113,7 @@ stdout will show you duplicate file paths and sizes such as::
 
 Report:
 ~~~~~~~~~~~~~~~~~~~~~~
-A report named LitenDuplicateReport.txt will be created in your current working
+A report named LitenDuplicateReport.csv will be created in your current working
 directory::
 
     Duplicate Version,     Path,       Size,       ModDate
