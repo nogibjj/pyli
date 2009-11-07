@@ -11,7 +11,7 @@ __date__ = "2008-12-25"
 
 """
 Liten:  A deduplication command line tool and library
-===============================================================================
+=====================================================
 
 :Author: Noah Gift
 :Version: $Revision: 0.1.5 $
@@ -34,54 +34,48 @@ developing API that lends itself to customization via an ActionsMixin class.
 Example CLI Usage:
 ------------------
 
-
 Size:
 ~~~~~~~~~~~~~~~~~~~~~~
-
 Search by size using --size or -s option::
 
-	liten.py -s 1 /mnt/raid         is equal to liten.py -s 1MB /mnt/raid
-	liten.py -s 1bytes /mnt/raid
-	liten.py -s 1KB /mnt/raid
-	liten.py -s 1MB /mnt/raid
-	liten.py -s 1GB /mnt/raid
+    liten.py -s 1 /mnt/raid         is equal to liten.py -s 1MB /mnt/raid
+    liten.py -s 1bytes /mnt/raid
+    liten.py -s 1KB /mnt/raid
+    liten.py -s 1MB /mnt/raid
+    liten.py -s 1GB /mnt/raid
     liten.py c:\in d:\              is equal to liten.py -s 1MB c:\in d:\
 
 Report Location:
 ~~~~~~~~~~~~~~~~~~~~~~
+Path to generate duplication report -r or --report=/tmp/report.txt::
 
-Generate custom report path using -r or --report=/tmp/report.txt::
+    ./liten.py --report=/tmp/test.txt /Users/ngift/Documents
 
-	./liten.py --report=/tmp/test.txt /Users/ngift/Documents
-
-By default a report will be created in CWD, called LitenDuplicateReport.csv
+By default a report is created in current dir as LitenDuplicateReport.csv
 
 Config File:
 ~~~~~~~~~~~~~~~~~~~~~~
-
 You can use a config file in the following format::
 
-	[Options]
-	path=/tmp
-	size=1MB
-	pattern=*.m4v
-	delete=True
+    [Options]
+    path=/tmp
+    size=1MB
+    pattern=*.m4v
+    delete=True
 
 
 You can call the config file anything and place it anywhere.
 
 Here is an example usage::
 
-	./liten.py --config=myconfig.ini
+    ./liten.py --config=myconfig.ini
 
 Verbosity:
 ~~~~~~~~~~~~~~~~~~~~~~
-
-All stdout can be suppressed by using --quiet or -q.
+Screen output can be suppressed by using --quiet or -q.
 
 Delete:
 ~~~~~~~~~~~~~~~~~~~~~~
-
 By using --delete the duplicate files will be automatically deleted.  The API
 has support for an interactive mode and a dry-run mode, they have not been
 implemented in the CLI as of yet.
@@ -110,7 +104,7 @@ Tests:
  * Run Doctests:  ./liten -t or --test
  * Run test_liten.py
  * Run test_create_file.py then delete those test files using liten::
-	python2.5 liten.py --delete /tmp
+    python2.5 liten.py --delete /tmp
 
 Display Options:
 ---------------------------
@@ -119,18 +113,18 @@ Stdout:
 ~~~~~~~~~~~~~~~~~~~~~~
 stdout will show you duplicate file paths and sizes such as::
 
-	Printing dups over 1 MB using md5 checksum: [SIZE] [ORIG] [DUP]
-	7 MB  Orig:  /Users/ngift/Downloads/bzr-0-2.17.tar
-	Dupe:  /Users/ngift/Downloads/bzr-0-4.17.tar
+    Printing dups over 1 MB using md5 checksum: [SIZE] [ORIG] [DUP]
+    7 MB  Orig:  /Users/ngift/Downloads/bzr-0-2.17.tar
+    Dupe:  /Users/ngift/Downloads/bzr-0-4.17.tar
 
 Report:
 ~~~~~~~~~~~~~~~~~~~~~~
 A report named LitenDuplicateReport.csv will be created in your current working
 directory::
 
-	Duplicate Version,     Path,       Size,       ModDate
-	Original, /Users/ngift/Downloads/bzr-0-2.17.tar, 7 MB, 07/10/2007 01:43:12 AM
-	Duplicate, /Users/ngift/Downloads/bzr-0-3.17.tar, 7 MB, 07/10/2007 01:43:27 AM
+    Duplicate Version,     Path,       Size,       ModDate
+    Original, /Users/ngift/Downloads/bzr-0-2.17.tar, 7 MB, 07/10/2007 01:43:12 AM
+    Duplicate, /Users/ngift/Downloads/bzr-0-3.17.tar, 7 MB, 07/10/2007 01:43:27 AM
 
 
 Debug Mode Environmental Variables:
@@ -170,6 +164,8 @@ if __debug__:
         print "%s Print Mode" % MESSAGE
     if LITEN_DEBUG_MODE == 2:
         print "%s pdb Mode" % MESSAGE
+
+
 class ActionsMixin(object):
     """An Actions Mixin Class"""
 
@@ -205,7 +201,6 @@ class ActionsMixin(object):
                else:
                    print "Skipping:  %s" % file
                    return None
-
 
 
 class FileAttributes(object):
@@ -440,7 +435,7 @@ class Liten(FileAttributes, ActionsMixin):
                     record_count += 1
                     #File Size, Pattern Filter Section
                     if byte_size >= byteSizeThreshold:
-                        if fnmatch(path, self.pattern):		#default * match
+                        if fnmatch(path, self.pattern):         #default * match
                             if LITEN_DEBUG_MODE == 1:
                                 print "Matches: %s" % path
 
