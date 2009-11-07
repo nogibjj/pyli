@@ -389,8 +389,6 @@ class Liten(FileAttributes, ActionsMixin):
         that has been found before.  The checksum is then used as the basis to
         determine duplicates.
 
-        (Note that test includes .svn directory)
-
         >> from liten import Liten
         >>> Liten = Liten(spath='testData', verbose=False)
         >>> Liten.diskWalker()
@@ -398,7 +396,7 @@ class Liten(FileAttributes, ActionsMixin):
         >>> Liten.fileSize="45bytes"
         >>> dupes = Liten.diskWalker()
         >>> print len(dupes)
-        4
+        2
 
         """
         #optional pdb Debug Mode
