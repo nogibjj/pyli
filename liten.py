@@ -221,6 +221,9 @@ class ActionsInteractive(ActionsMixin):
 
 class FileAttributes(object):
 
+    def __init__(self):
+        self.fileSize = None
+
     def makeModDate(self,path):
         """
         Makes a modification date object
@@ -288,7 +291,8 @@ class FileAttributes(object):
         if LITEN_DEBUG_MODE == 2:
             pdb.set_trace()
 
-        patterns = {'bytes': '1',
+        patterns = {'BYTES': '1',
+                    'B':  '1',
                     'KB': '1024',
                     'MB': '1048576',
                     'GB': '1073741824',
@@ -297,25 +301,26 @@ class FileAttributes(object):
         #Detects File Size Type, Strips off Characters
         #Converts value to bytes
         try:
+            filesize = self.fileSize.upper()
             for key in patterns:
                 value = patterns[key]
 
-                #print self.fileSize
-                if re.search(key, self.fileSize):
+                if re.match("\d+%s$" % key, filesize):
                     if LITEN_DEBUG_MODE:
-                        print "Key: %s Filesize: %s " % (key, self.fileSize)
+                        print "Key: %s Filesize: %s " % (key, filesize)
                         print "Value: %s " % value
-                    byteValue = int(self.fileSize.strip(key)) * int(value)
+                    byteValue = int(filesize.rstrip(key)) * int(value)
                     #print "Converted byte value: %s " % byteValue
                     break
             else:
-                byteValue = int(self.fileSize.strip()) * int(1048576)
+                byteValue = int(filesize.strip()) * int(1048576)
                 #print "Converted byte value: %s " % byteValue
-        except Exception, err:
+        except ValueError, err:
             if LITEN_DEBUG_MODE:
                 print "Problem evaluating:", self.fileSize, Exception, err
             else:
-                pass    #Note this gets caught using optparse which is cleaner
+                raise UnboundLocalError
+                #Note this gets caught using optparse which is cleaner
         return byteValue
 
 

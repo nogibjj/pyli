@@ -1,6 +1,7 @@
 2009-11-08
 techtonik
 
+* size is now case-insensitive
 * use csv module for generating report
 * report format changed
   - no notion of original/duplicate
