@@ -14,7 +14,7 @@ Liten:  A deduplication command line tool and library
 =====================================================
 
 :Author: Noah Gift
-:Version: $Revision: 0.1.5 $
+:Version: 0.2-dev
 :Copyright: This document has been placed in the public domain.
 
 Summary
@@ -607,31 +607,28 @@ class LitenController(object):
             if LITEN_DEBUG_MODE == 2:
                 pdb.set_trace()
 
-        descriptionMessage = """
-        A command line tool for detecting duplicates using md5 checksums.
-        """
+        descriptionMessage = "A command line tool for detecting duplicates using md5 checksums."
 
         p = optparse.OptionParser(description=descriptionMessage,
                                     prog='liten',
                                     version='liten %s' % __version__,
                                     usage= '%prog [options] [starting dir1] [dir2] ...')
-        p.add_option('--config', '-c',
-                    help='Path to read in config file')
+        p.add_option('--config', '-c', help='path to config file')
         p.add_option('--size', '-s',
-                    help='File Size Example:  10bytes, 10KB, 10MB,10GB,10TB \
-                    plain number defaults to MB (1 = 1MB)',
+                    help='minimum file size, example:  10bytes, 10KB, 10MB, 10GB, 10TB '
+                    '(no suffix means MB)',
                     default='1MB')
         p.add_option('--pattern', '-p',
-                    help='Pattern Match Examples: *.txt, *.iso, music[0-5].mp3',
+                    help='pattern match examples: *.txt, *.iso, music[0-5].mp3',
                     default='*')
         p.add_option('--quiet', '-q', action="store_true",
-                    help='Suppresses all STDOUT.',default=False)
+                    help='suppress all screen output',default=False)
         p.add_option('--delete', '-d', action="store_true",
                     help='DELETES all duplicate matches permanently!',default=False)
         p.add_option('--report', '-r',
-                    help='Path to store duplicate report. Default CWD',
+                    help='path to store duplicate report (./LitenDuplicateReport.csv by default)',
                     default='LitenDuplicateReport.csv')
-        p.add_option('--test', '-t', action="store_true",help='Runs doctest.')
+        p.add_option('--test', '-t', action="store_true",help='run doctests')
 
         options, arguments = p.parse_args()
 
