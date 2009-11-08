@@ -1,7 +1,9 @@
 2009-11-08
 techtonik
 
+* use csv module for generating report
 * report format changed
+  - no notion of original/duplicate
   - tab separated CSV
   - header repeated only once at file start
   - duplicate groups are separated by blank line

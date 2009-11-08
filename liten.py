@@ -143,7 +143,7 @@ import os
 import datetime
 import re
 import sys
-import string
+import csv
 import time
 import optparse
 import hashlib
@@ -422,9 +422,9 @@ class Liten(FileAttributes):
                 pdb.set_trace()
 
         #Local Variables
-        report = open(self.reportPath, 'w')
+        report = csv.writer(open(self.reportPath, 'wb'), dialect='excel-tab')
         #  write header
-        report.write("Duplicate Version\tPath\tSize\tModDate\n")
+        report.writerow("Path Size ModDate".split())
 
         if isinstance(self.spath, basestring):
             main_path = os.walk(self.spath)
@@ -510,16 +510,16 @@ class Liten(FileAttributes):
                                         orig_path, "DUPE: ", path
                                     
                                     #Write separator and original line
-                                    report.write("\n")
-                                    report.write("%s\t%s\t%s MB\t%s\n" % ("Original",\
-                                    orig_path, byte_size/1048576, orig_mod_date))
+                                    report.writerow("")
+                                    report.writerow([orig_path,
+                                        "%d MB" % (byte_size/1048576), orig_mod_date])
 
                                     #Gets Duplicates Modification Date
                                     dupeModDate = self.makeCreateDate(path)
 
                                     #Write duplicate line
-                                    report.write("%s\t%s\t%s MB\t%s\n" % ("Duplicate",\
-                                    path, byte_size/1048576, dupeModDate))
+                                    report.writerow([path,
+                                        "%d MB" % (byte_size/1048576), dupeModDate])
 
                                     #Execute remove() action from ActionMixin
                                     self.handler.remove(path)
