@@ -1,3 +1,16 @@
+2009-11-08
+techtonik
+
+* Changed API
+  - 'action' callback parameter is removed from Liten constructor. Use 'handler'
+    parameter with ActionsMixin subclass to alter remove() action logic
+  - ActionsMixin not a parent, but a parameter to Liten class constructor.
+    This allows to specify own behaviour for remove() and future actions
+  - 'delete' parameter is removed from Liten() constructor - use ActionAutomatic
+    handler for file deletion
+
+  (P.S. ActionMixin is now a Strategy pattern for handling duplicates)
+
 2008-12-25
 techtonik
 0.1.5

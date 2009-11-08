@@ -5,8 +5,8 @@
 #http://www.opensource.org/licenses/mit-license.php
 #Copyright (c) 2007,2008 Noah Gift
 
-__version__ = "0.1.5"
-__date__ = "2008-12-25"
+__version__ = "0.2-dev"
+__date__ = "2009-11-08"
 
 
 """
@@ -167,12 +167,23 @@ if __debug__:
 
 
 class ActionsMixin(object):
-    """An Actions Mixin Class"""
+    """Subclassable API. Callbacks that Liten calls for actions, i.e. remove()
 
-    def remove(self, file, dryrun=False, interactive=False):
+       Default class does nothing.
+    """
+
+    def remove(self, file, dryrun=False):
+        """action to take when file is requested to be removed
+        """
+        pass
+
+class ActionsAutomatic(ActionsMixin):
+    """Process automatically, i.e. remove files"""
+
+    def remove(self, file, dryrun=False):
+           """takes a path and deletes file/unlinks
            """
-           takes a path and deletes file/unlinks
-           """
+
            #simulation mode for deletion
            if dryrun:
                print "Dry Run:  %s [NOT DELETED]" % file
@@ -184,6 +195,11 @@ class ActionsMixin(object):
                except Exception, err:
                    print err
                    return status
+
+class ActionsInteractive(ActionsMixin):
+    """Confirm each action interactively"""
+
+    def remove(self, file, dryrun=False):
 
            #interactive deletion mode
            if interactive:
@@ -303,7 +319,7 @@ class FileAttributes(object):
         return byteValue
 
 
-class Liten(FileAttributes, ActionsMixin):
+class Liten(FileAttributes):
     """
     A base class for searching a file tree.
 
@@ -312,9 +328,7 @@ class Liten(FileAttributes, ActionsMixin):
     duplicates.
 
     You may modify the action that occurs when a duplicate is
-    found my either creating an ActionsMixin method, or
-    you can pass Liten a function that takes a file argument
-    and process that file object.
+    found my subclassing ActionsMixin and specify it as a handler.
 
     >>> Liten = Liten(spath='testData')
     >>> fakePath = 'testData/testDocOne.txt'
@@ -344,8 +358,7 @@ class Liten(FileAttributes, ActionsMixin):
                     reportPath="LitenDuplicateReport.csv",
                     config = None,
                     verbose = True,
-                    delete = False,
-                    action = False):
+                    handler = False):
 
         self.spath = spath
         self.reportPath = reportPath
@@ -360,8 +373,12 @@ class Liten(FileAttributes, ActionsMixin):
         self.confirmed_dup_value = {}
         self.byte_cache = {}
         self.matches = []
-        self.delete = delete
-        self.action = action
+        if not handler:
+            self.handler = ActionsMixin()
+        else:
+            if not isinstance(handler, ActionsMixin):
+                raise TypeError("specified parameter is not ActionsMixin subclass")
+            self.handler = handler                
 
         self.dupNumber = 0
 
@@ -503,12 +520,8 @@ class Liten(FileAttributes, ActionsMixin):
                                     report.write("%s, %s, %s MB, %s\n" % ("Duplicate",\
                                     path, byte_size/1048576, dupeModDate))
 
-                                    #Runtime Decision
-                                    if self.action:
-                                        self.action(path)
-                                    else:
-                                        if self.delete:
-                                            self.remove(path)
+                                    #Execute remove() action from ActionMixin
+                                    self.handler.remove(path)
 
                                     #Note this is a good spot for the dup rec count
                                     self.confirmed_dup_key[orig_path] = self.checksum_cache_value
@@ -661,12 +674,16 @@ class LitenController(object):
                    % arg
                    sys.exit(1)
             try:
+                if options.delete:
+                    actions_handler = ActionsAutomatic()
+                else:
+                    actions_handler = ActionsMixin()
                 start = Liten(spath = arguments,
                             fileSize = options.size,
                             pattern = options.pattern,
                             reportPath=options.report,
                             verbose=verbose,
-                            delete = options.delete)
+                            handler = actions_handler)
                 start.diskWalker()
             #Here I catch bogus size input exceptions
             except UnboundLocalError, err:
