@@ -122,9 +122,9 @@ Report:
 By default report LitenDuplicateReport.csv is created in your current working
 directory. It is tab separated CSV file::
 
-    Duplicate Version	Path	Size	ModDate
-    Original	/Users/ngift/Downloads/bzr-0-2.17.tar	7 MB	07/10/2007 01:43:12 AM
-    Duplicate	/Users/ngift/Downloads/bzr-0-3.17.tar	7 MB	07/10/2007 01:43:27 AM
+    Path	Size	ModDate
+    /Users/ngift/Downloads/bzr-0-2.17.tar	7 MB	07/10/2007 01:43:12 AM
+    /Users/ngift/Downloads/bzr-0-3.17.tar	7 MB	07/10/2007 01:43:27 AM
 
 
 Debug Mode Environmental Variables:
