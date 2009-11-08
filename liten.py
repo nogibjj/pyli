@@ -119,12 +119,12 @@ stdout will show you duplicate file paths and sizes such as::
 
 Report:
 ~~~~~~~~~~~~~~~~~~~~~~
-A report named LitenDuplicateReport.csv will be created in your current working
-directory::
+By default report LitenDuplicateReport.csv is created in your current working
+directory. It is tab separated CSV file::
 
-    Duplicate Version,     Path,       Size,       ModDate
-    Original, /Users/ngift/Downloads/bzr-0-2.17.tar, 7 MB, 07/10/2007 01:43:12 AM
-    Duplicate, /Users/ngift/Downloads/bzr-0-3.17.tar, 7 MB, 07/10/2007 01:43:27 AM
+    Duplicate Version	Path	Size	ModDate
+    Original	/Users/ngift/Downloads/bzr-0-2.17.tar	7 MB	07/10/2007 01:43:12 AM
+    Duplicate	/Users/ngift/Downloads/bzr-0-3.17.tar	7 MB	07/10/2007 01:43:27 AM
 
 
 Debug Mode Environmental Variables:
@@ -423,6 +423,9 @@ class Liten(FileAttributes):
 
         #Local Variables
         report = open(self.reportPath, 'w')
+        #  write header
+        report.write("Duplicate Version\tPath\tSize\tModDate\n")
+
         if isinstance(self.spath, basestring):
             main_path = os.walk(self.spath)
         else:
@@ -505,19 +508,17 @@ class Liten(FileAttributes):
                                     if self.verbose:
                                         print byte_size/1048576, "MB ", "ORIG: ",\
                                         orig_path, "DUPE: ", path
-
-                                    #write out to report
-                                    report.write("Duplicate Version,     Path,      \
-                                    Size,       ModDate\n")
-                                    #Write original line
-                                    report.write("%s, %s, %s MB, %s\n" % ("Original",\
+                                    
+                                    #Write separator and original line
+                                    report.write("\n")
+                                    report.write("%s\t%s\t%s MB\t%s\n" % ("Original",\
                                     orig_path, byte_size/1048576, orig_mod_date))
 
                                     #Gets Duplicates Modification Date
                                     dupeModDate = self.makeCreateDate(path)
 
                                     #Write duplicate line
-                                    report.write("%s, %s, %s MB, %s\n" % ("Duplicate",\
+                                    report.write("%s\t%s\t%s MB\t%s\n" % ("Duplicate",\
                                     path, byte_size/1048576, dupeModDate))
 
                                     #Execute remove() action from ActionMixin

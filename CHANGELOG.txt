@@ -1,7 +1,12 @@
 2009-11-08
 techtonik
 
-* Changed API
+* report format changed
+  - tab separated CSV
+  - header repeated only once at file start
+  - duplicate groups are separated by blank line
+
+* API changed
   - 'action' callback parameter is removed from Liten constructor. Use 'handler'
     parameter with ActionsMixin subclass to alter remove() action logic
   - ActionsMixin not a parent, but a parameter to Liten class constructor.
