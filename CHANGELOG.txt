@@ -8,6 +8,7 @@ techtonik
   - tab separated CSV
   - header repeated only once at file start
   - duplicate groups are separated by blank line
+* docs can be read with standard python help() function
 
 * API changed
   - 'action' callback parameter is removed from Liten constructor. Use 'handler'

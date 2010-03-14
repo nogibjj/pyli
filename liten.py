@@ -1,32 +1,31 @@
 #!/usr/bin/env python
-#Liten - Deduplication command line tool and library
-#Author:  Noah Gift
-#License:  MIT License
-#http://www.opensource.org/licenses/mit-license.php
-#Copyright (c) 2007,2008 Noah Gift
+#
+#  Liten - Deduplication command line tool and library
+#
+#  Copyright (c) 2007,2008 Noah Gift
+#  Copyright (c) 2009,2010 anatoly techtonik
+#
+#  License:  MIT License
+#  http://www.opensource.org/licenses/mit-license.php
+#
 
 __version__ = "0.2-dev"
 __date__ = "2009-11-08"
 
 
-"""
+__doc__ = """
 Liten:  A deduplication command line tool and library
 =====================================================
-
-:Author: Noah Gift
-:Version: 0.2-dev
-:Copyright: This document has been placed in the public domain.
 
 Summary
 ---------
 
-A deduplication command line tool and library.  A relatively efficient
-algorithm based on searching like sized files, and then performing a full md5
-checksum, is used to determine duplicate files/file objects.  Files can be
-deleted upon discovery, and pattern matching can be used to limit search
-results. Finally, configuration file use is supported, and there is a
-developing API that lends itself to customization via an ActionsMixin class.
-
+Liten determines duplicate files/file objects using relatively efficient
+algorithm first selecting like sized files, and then performing a full md5
+checksum. Files can be deleted upon discovery, and pattern matching can
+be used to limit search scope. Finally, options can be read from
+configuration file. There is also unstable development API with behavior
+customization via ActionsMixin class.
 
 
 .. contents::
