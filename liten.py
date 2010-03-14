@@ -218,12 +218,9 @@ class ActionsInteractive(ActionsMixin):
                    return None
 
 
-class FileAttributes(object):
+class FileUtils(object):
 
-    def __init__(self):
-        self.fileSize = None
-
-    def makeModDate(self,path):
+    def makeModDate(self, path):
         """
         Makes a modification date object
         """
@@ -279,51 +276,8 @@ class FileAttributes(object):
         (shortname, ext) = os.path.splitext(file)
         return ext
 
-    def sizeType(self):
-        """
-        Calculates size based on input.
 
-        Uses regex search of input to determine size type.
-        """
-
-        #optional pdb Debug Mode
-        if LITEN_DEBUG_MODE == 2:
-            pdb.set_trace()
-
-        patterns = {'BYTES': '1',
-                    'B':  '1',
-                    'KB': '1024',
-                    'MB': '1048576',
-                    'GB': '1073741824',
-                    'TB': '1099511627776'}
-
-        #Detects File Size Type, Strips off Characters
-        #Converts value to bytes
-        try:
-            filesize = self.fileSize.upper()
-            for key in patterns:
-                value = patterns[key]
-
-                if re.match("\d+%s$" % key, filesize):
-                    if LITEN_DEBUG_MODE:
-                        print "Key: %s Filesize: %s " % (key, filesize)
-                        print "Value: %s " % value
-                    byteValue = int(filesize.rstrip(key)) * int(value)
-                    #print "Converted byte value: %s " % byteValue
-                    break
-            else:
-                byteValue = int(filesize.strip()) * int(1048576)
-                #print "Converted byte value: %s " % byteValue
-        except ValueError, err:
-            if LITEN_DEBUG_MODE:
-                print "Problem evaluating:", self.fileSize, Exception, err
-            else:
-                raise UnboundLocalError
-                #Note this gets caught using optparse which is cleaner
-        return byteValue
-
-
-class Liten(FileAttributes):
+class Liten(FileUtils):
     """
     A base class for searching a file tree.
 
@@ -399,6 +353,51 @@ class Liten(FileAttributes):
 
         self.checksum_cache_key[checksum]=checksum_cache_value
 
+    def convertSize(self, sizestr):
+        """
+        Convert file size from suffixed string to bytes.
+
+        Uses regex search to determine size multiplier.
+
+        :param sizestr: string like '1Mb', '32Kb', '2' etc.
+        :return: 
+        """
+
+        #optional pdb Debug Mode
+        if LITEN_DEBUG_MODE == 2:
+            pdb.set_trace()
+
+        patterns = {'BYTES': '1',
+                    'B':  '1',
+                    'KB': '1024',
+                    'MB': '1048576',       # default
+                    'GB': '1073741824',
+                    'TB': '1099511627776'}
+
+        #Detects File Size Type, Strip off Characters
+        filesize = sizestr.upper()
+        try:
+            for key in patterns:
+                value = patterns[key]
+
+                if re.match("\d+%s$" % key, filesize):
+                    if LITEN_DEBUG_MODE:
+                        print "Key: %s Filesize: %s " % (key, filesize)
+                        print "Value: %s " % value
+                    byteValue = int(filesize.rstrip(key)) * int(value)
+                    #print "Converted byte value: %s " % byteValue
+                    break
+            else:
+                byteValue = int(filesize.strip()) * int(1048576)
+                #print "Converted byte value: %s " % byteValue
+        except ValueError, err:
+            if LITEN_DEBUG_MODE:
+                print "Problem evaluating:", sizestr, Exception, err
+            else:
+                raise UnboundLocalError
+                #Note this gets caught using optparse which is cleaner
+        return byteValue
+
     def diskWalker(self):
         """Walks Directory Tree Looking at Every File, while performing a
         duplicate match algorithm.
@@ -434,9 +433,9 @@ class Liten(FileAttributes):
             main_path = os.walk(self.spath)
         else:
             main_path = chain(*map(os.walk, self.spath))
+        byteSizeThreshold = self.convertSize(self.fileSize)
         if LITEN_DEBUG_MODE == 1:
-            print "self.sizeType() %s" % self.sizeType()
-        byteSizeThreshold = self.sizeType()
+            print "File size threshold (in bytes) %s" % byteSizeThreshold
         self.dupNumber=0
         byte_count=0
         record_count=0
