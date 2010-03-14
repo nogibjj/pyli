@@ -75,7 +75,7 @@ Screen output can be suppressed by using --quiet or -q.
 
 Delete:
 ~~~~~~~~~~~~~~~~~~~~~~
-By using --delete the duplicate files will be automatically deleted.  The API
+By using --delete the duplicate files will be automatically deleted. The API
 has support for an interactive mode and a dry-run mode, they have not been
 implemented in the CLI as of yet.
 
@@ -95,12 +95,12 @@ Example Library/API Usage:
     False
 
 There is also the concept of an Action, which can be implemented later, that
-will allow customizable actions to occur upon an a condition that gets defined
-as you walk down a tree of files.
+will allow customizable actions to occur upon an a condition that gets
+defined as you walk down a tree of files.
 
 Tests:
 ~~~~~~~~~~~~~~~~~~~~~~
- * Run Doctests:  ./liten -t or --test
+ * Run doctests:  ./liten -t or --test
  * Run test_liten.py
  * Run test_create_file.py then delete those test files using liten::
     python2.5 liten.py --delete /tmp
@@ -118,12 +118,12 @@ stdout will show you duplicate file paths and sizes such as::
 
 Report:
 ~~~~~~~~~~~~~~~~~~~~~~
-By default report LitenDuplicateReport.csv is created in your current working
-directory. It is tab separated CSV file::
+By default report LitenDuplicateReport.csv is created in your current
+working directory. It is tab separated CSV file::
 
-    Path	Size	ModDate
-    /Users/ngift/Downloads/bzr-0-2.17.tar	7 MB	07/10/2007 01:43:12 AM
-    /Users/ngift/Downloads/bzr-0-3.17.tar	7 MB	07/10/2007 01:43:27 AM
+  Path	Size	ModDate
+  /Users/ngift/Downloads/bzr-0-2.17.tar	7 MB	07/10/2007 01:43:12 AM
+  /Users/ngift/Downloads/bzr-0-3.17.tar	7 MB	07/10/2007 01:43:27 AM
 
 
 Debug Mode Environmental Variables:
@@ -618,7 +618,6 @@ class LitenController(object):
                                     prog='liten',
                                     version='liten %s' % __version__,
                                     usage= '%prog [options] [starting dir1] [dir2] ...')
-        p.add_option('--config', '-c', help='path to config file')
         p.add_option('--size', '-s',
                     help='minimum file size, example:  10bytes, 10KB, 10MB, 10GB, 10TB '
                     '(no suffix means MB)',
@@ -626,21 +625,29 @@ class LitenController(object):
         p.add_option('--pattern', '-p',
                     help='pattern match examples: *.txt, *.iso, music[0-5].mp3',
                     default='*')
-        p.add_option('--quiet', '-q', action="store_true",
-                    help='suppress all screen output',default=False)
-        p.add_option('--delete', '-d', action="store_true",
-                    help='DELETES all duplicate matches permanently!',default=False)
         p.add_option('--report', '-r',
                     help='path to store duplicate report (./LitenDuplicateReport.csv by default)',
                     default='LitenDuplicateReport.csv')
+        p.add_option('--delete', '-d', action="store_true",
+                    help='DELETES all duplicate matches permanently!',default=False)
+        p.add_option('--config', '-c', help='specify path to config file')
+        p.add_option('--quiet', '-q', action="store_true",
+                    help='suppress all screen output except errors',
+                    default=False)
         p.add_option('--test', '-t', action="store_true",help='run doctests')
 
         options, arguments = p.parse_args()
 
+        if options.quiet:
+            verbose = False
+        else:
+            verbose = True
+
         #run tests and then exit
         if options.test:
-            _test()
+            _test(verbose)
             sys.exit(0)
+
         if options.config:
             if __debug__:
                 if LITEN_DEBUG_MODE == 2:
@@ -665,10 +672,6 @@ class LitenController(object):
                 print err
                 sys.exit(1)
 
-        if options.quiet:
-            verbose = False
-        else:
-            verbose = True
         if len(arguments) > 0:
             for arg in arguments:
                 if not os.path.isdir(arg):
@@ -700,14 +703,15 @@ class LitenController(object):
             p.print_help()
 
 def main():
-    """Runs liten."""
+    """run liten"""
     create = LitenController()
     create.run()
 
-def _test():
-    """Runs doctests."""
+def _test(verbose=True):
+    """run doctests"""
+
     import doctest
-    doctest.testmod(verbose=True)
+    doctest.testmod(verbose=verbose)
 
 if __name__ == "__main__":
     main()
