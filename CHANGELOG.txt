@@ -4,8 +4,8 @@
 * docs can be read with standard python help() function
 * API changes
   - FileAttributes renamed to FileUtils
-  - FileAttributes::sizeType() renamed to Liten::convertSize(string)
-
+  - FileAttributes.sizeType() renamed to Liten.convertSize(string)
+  - Liten.convertSize() is now static, throws only ValueError
 
 2009-11-08 techtonik
 2.0-dev

@@ -353,49 +353,56 @@ class Liten(FileUtils):
 
         self.checksum_cache_key[checksum]=checksum_cache_value
 
-    def convertSize(self, sizestr):
+    @staticmethod
+    def convertSize(sizestr, default='MB'):
         """
         Convert file size from suffixed string to bytes.
 
         Uses regex search to determine size multiplier.
 
-        :param sizestr: string like '1Mb', '32Kb', '2' etc.
-        :return: 
+        :param sizestr: string like '1Mb', '32kb', '2' etc.
+        :returns: integer
+        :raises: ValueError
+
+        >>> cs = Liten.convertSize
+        >>> cs('1kb')
+        1024
+        >>> cs('233GB')
+        250181844992L
+        >>> cs('9')
+        9437184
+        >>> cs('345.5')
+        Traceback (most recent call last):
+            ...
+        ValueError: invalid literal for int() with base 10: '345.5'
         """
-
-        #optional pdb Debug Mode
-        if LITEN_DEBUG_MODE == 2:
-            pdb.set_trace()
-
-        patterns = {'BYTES': '1',
-                    'B':  '1',
-                    'KB': '1024',
-                    'MB': '1048576',       # default
-                    'GB': '1073741824',
-                    'TB': '1099511627776'}
+        patterns = {'BYTES': 1,
+                    'B':  1,
+                    'KB': 1024,
+                    'MB': 1048576,       # default
+                    'GB': 1073741824,
+                    'TB': 1099511627776}
 
         #Detects File Size Type, Strip off Characters
         filesize = sizestr.upper()
         try:
             for key in patterns:
-                value = patterns[key]
+                mult = patterns[key]
 
                 if re.match("\d+%s$" % key, filesize):
                     if LITEN_DEBUG_MODE:
-                        print "Key: %s Filesize: %s " % (key, filesize)
-                        print "Value: %s " % value
-                    byteValue = int(filesize.rstrip(key)) * int(value)
+                        print "Sizestr: %s Key: %s Size: %s Multiplier: %s" % \
+                               (sizestr, key, filesize, mult)
+                    byteValue = int(filesize.rstrip(key)) * mult
                     #print "Converted byte value: %s " % byteValue
                     break
             else:
-                byteValue = int(filesize.strip()) * int(1048576)
+                byteValue = int(filesize.strip()) * patterns[default]
                 #print "Converted byte value: %s " % byteValue
         except ValueError, err:
             if LITEN_DEBUG_MODE:
                 print "Problem evaluating:", sizestr, Exception, err
-            else:
-                raise UnboundLocalError
-                #Note this gets caught using optparse which is cleaner
+            raise
         return byteValue
 
     def diskWalker(self):
@@ -408,6 +415,8 @@ class Liten(FileUtils):
         to next file.  A md5 checksum is made of any file that has a byte size
         that has been found before.  The checksum is then used as the basis to
         determine duplicates.
+
+        :raises: UnboundLocalError
 
         >> from liten import Liten
         >>> Liten = Liten(spath='testData', verbose=False)
@@ -433,7 +442,11 @@ class Liten(FileUtils):
             main_path = os.walk(self.spath)
         else:
             main_path = chain(*map(os.walk, self.spath))
-        byteSizeThreshold = self.convertSize(self.fileSize)
+        try:
+            byteSizeThreshold = self.convertSize(self.fileSize)
+        except ValueError, err:
+            #Note this gets caught using optparse which is cleaner
+            raise UnboundLocalError
         if LITEN_DEBUG_MODE == 1:
             print "File size threshold (in bytes) %s" % byteSizeThreshold
         self.dupNumber=0
