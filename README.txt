@@ -11,6 +11,13 @@ Contributors:
 * Anatoly Techtonik
 
 Questions:
-noah dot gift at gmail.com
+liten@googlegroups.com
 
+Documentation:
 See docs/index.txt for details
+
+Tests:
+* Run doctests:  ./liten -t or --test
+* Run test_liten.py
+* Run test_create_file.py then delete those test files using liten::
+    python liten.py --delete /tmp
