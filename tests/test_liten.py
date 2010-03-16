@@ -97,10 +97,10 @@ class TestLitenBaseClass(unittest.TestCase):
     def testBogus(self):
         """Tests Bogus Size Input.
 
-        Should raise exception UnboundLocalError or fail
+        Should raise exception ValueError or fail
         """
         liten = Liten(spath='testData', fileSize=self.Bogus)
-        self.assertRaises(UnboundLocalError, liten.convertSize, liten.fileSize)
+        self.assertRaises(ValueError, liten.convertSize, liten.fileSize)
 
 
 if __name__ == '__main__':
