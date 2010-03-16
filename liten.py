@@ -82,12 +82,12 @@ implemented in the CLI as of yet.
 Example Library/API Usage:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    >>> Liten = Liten(spath='testData')
-    >>> dupeFileOne = 'testData/testDocOne.txt'
+    >>> Liten = Liten()
+    >>> dupeFileOne = 'tests/data/testDocOne.txt'
     >>> checksumOne = Liten.createChecksum(dupeFileOne)
-    >>> dupeFileTwo = 'testData/testDocTwo.txt'
+    >>> dupeFileTwo = 'tests/data/testDocTwo.txt'
     >>> checksumTwo = Liten.createChecksum(dupeFileTwo)
-    >>> nonDupeFile = 'testData/testDocThree_wrong_match.txt'
+    >>> nonDupeFile = 'tests/data/testDocThree_wrong_match.txt'
     >>> checksumThree = Liten.createChecksum(nonDupeFile)
     >>> checksumOne == checksumTwo
     True
@@ -101,9 +101,9 @@ defined as you walk down a tree of files.
 Tests:
 ~~~~~~~~~~~~~~~~~~~~~~
  * Run doctests:  ./liten -t or --test
- * Run test_liten.py
- * Run test_create_file.py then delete those test files using liten::
-    python2.5 liten.py --delete /tmp
+ * Run tests/test_liten.py
+ * Run tests/test_create_file.py then delete those test files using liten::
+    python liten.py --delete /tmp
 
 Display Options:
 ---------------------------
@@ -289,16 +289,16 @@ class Liten(FileUtils):
     found my subclassing ActionsMixin and specify it as a handler.
 
     >>> Liten = Liten(spath='testData')
-    >>> fakePath = 'testData/testDocOne.txt'
+    >>> fakePath = 'tests/data/testDocOne.txt'
     >>> modDate = Liten.makeModDate(fakePath)
     >>> createDate = Liten.makeCreateDate(fakePath)
-    >>> dupeFileOne = 'testData/testDocOne.txt'
+    >>> dupeFileOne = 'tests/data/testDocOne.txt'
     >>> checksumOne = Liten.createChecksum(dupeFileOne)
     >>> badChecksumAttempt = Liten.createChecksum('fileNotFound.txt')
     IO error for fileNotFound.txt
-    >>> dupeFileTwo = 'testData/testDocTwo.txt'
+    >>> dupeFileTwo = 'tests/data/testDocTwo.txt'
     >>> checksumTwo = Liten.createChecksum(dupeFileTwo)
-    >>> nonDupeFile = 'testData/testDocThree_wrong_match.txt'
+    >>> nonDupeFile = 'tests/data/testDocThree_wrong_match.txt'
     >>> checksumThree = Liten.createChecksum(nonDupeFile)
     >>> checksumOne == checksumTwo
     True
@@ -410,7 +410,7 @@ class Liten(FileUtils):
         determine duplicates.
 
         >> from liten import Liten
-        >>> Liten = Liten(spath='testData', verbose=False)
+        >>> Liten = Liten(spath='tests', verbose=False)
         >>> Liten.diskWalker()
         {}
         >>> Liten.fileSize="45bytes"
@@ -708,6 +708,9 @@ def main():
 
 def _test(verbose=True):
     """run doctests"""
+
+    if not os.path.isdir("tests/data"):
+        sys.exit("Error: Running doctests requires 'tests/data' dir to be present")
 
     import doctest
     doctest.testmod(verbose=verbose)

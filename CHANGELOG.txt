@@ -2,6 +2,7 @@
 2.0-dev
 
 * docs can be read with standard python help() function
+* move tests into tests/ directory
 * API changes
   - FileAttributes renamed to FileUtils
   - FileAttributes::sizeType() renamed to Liten::convertSize(string)

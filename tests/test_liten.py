@@ -4,16 +4,19 @@ import unittest
 import doctest
 from doctest import DocTestSuite
 
-from liten import Liten, LitenController
+from os.path import abspath,dirname,join
 
 class TestLitenBaseClass(unittest.TestCase):
     """Tests for LitenBaseClass Class."""
 
     def setUp(self):
-        self.fakePath = 'testData/testDocOne.txt'
-        self.dupeFileOne = 'testData/testDocOne.txt'
-        self.dupeFileTwo = 'testData/testDocTwo.txt'
-        self.nonDupeFile = 'testData/testDocThree_wrong_match.txt'
+        # absolute path to ./data dir
+        self.testData = join(dirname(abspath(__file__)), "data")
+
+        self.fakePath = join(self.testData, 'testDocOne.txt')
+        self.dupeFileOne = join(self.testData, 'testDocOne.txt')
+        self.dupeFileTwo = join(self.testData, 'testDocTwo.txt')
+        self.nonDupeFile = join(self.testData, 'testDocThree_wrong_match.txt')
 
         #Tests byte size calculations and conversions
         self.byteFileSize = '1bytes' #1 bytes
@@ -101,5 +104,11 @@ class TestLitenBaseClass(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    # add liten package path to PYTHONPATH
+    import sys
+    sys.path.append(dirname(dirname(abspath(__file__))))
+
+    from liten import Liten, LitenController
+
     unittest.main()
 

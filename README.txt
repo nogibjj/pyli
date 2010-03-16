@@ -18,6 +18,7 @@ See docs/index.txt for details
 
 Tests:
 * Run doctests:  ./liten -t or --test
-* Run test_liten.py
-* Run test_create_file.py then delete those test files using liten::
+* Run tests/test_liten.py
+* Run tests/test_create_file.py to create some files in temporary
+  directory and then delete those files using liten::
     python liten.py --delete /tmp
