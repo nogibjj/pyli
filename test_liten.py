@@ -61,35 +61,27 @@ class TestLitenBaseClass(unittest.TestCase):
         createExt = liten.createExt(self.dupeFileOne)
         self.assertEqual(createExt, ".txt")
 
-    def testByteSizeType(self):
+    def testByteconvertSize(self):
         """Tests ByteSize Calculations based on Input."""
         liten = Liten(spath='testData', fileSize=self.byteFileSize)
-        byteSizeType = liten.sizeType()
-        self.assertEqual(byteSizeType, 1)
+        byteconvertSize = liten.convertSize(liten.fileSize)
+        self.assertEqual(byteconvertSize, 1)
 
-    def testKByteSizeType(self):
+    def testKByteconvertSize(self):
         """Tests KBSize Calculations based on Input."""
-        liten = Liten(spath='testData', fileSize=self.KBFileSize)
-        KBSizeType = liten.sizeType()
-        self.assertEqual(KBSizeType, 1024)
+        self.assertEqual(Liten().convertSize(self.KBFileSize), 1024)
 
-    def testMBByteSizeType(self):
+    def testMBByteconvertSize(self):
         """Tests MBSize Calculations based on Input."""
-        liten = Liten(spath='testData', fileSize=self.MBFileSize)
-        MBSizeType = liten.sizeType()
-        self.assertEqual(MBSizeType, 1048576)
+        self.assertEqual(Liten().convertSize(self.MBFileSize), 1048576)
 
-    def testGBSizeType(self):
+    def testGBconvertSize(self):
         """Tests GBSize Calculations based on Input."""
-        liten = Liten(spath='testData', fileSize=self.GBFileSize)
-        GBSizeType = liten.sizeType()
-        self.assertEqual(GBSizeType, 1073741824)
+        self.assertEqual(Liten().convertSize(self.GBFileSize), 1073741824)
 
-    def testTBSizeType(self):
+    def testTBconvertSize(self):
         """Tests TBSize Calculations based on Input."""
-        liten = Liten(spath='testData', fileSize=self.TBFileSize)
-        TBSizeType = liten.sizeType()
-        self.assertEqual(TBSizeType, 1099511627776)
+        self.assertEqual(Liten().convertSize(self.TBFileSize), 1099511627776)
 
     def testNoQualifier(self):
         """Tests NoSize Calculations based on Input.
@@ -97,18 +89,15 @@ class TestLitenBaseClass(unittest.TestCase):
         Should convert No Qualifiers to MB
         """
         liten = Liten(spath='testData', fileSize=self.NoQualifier)
-        NoSizeType = liten.sizeType()
+        self.assertEqual(liten.convertSize(liten.fileSize), 1048576)
 
     def testBogus(self):
         """Tests Bogus Size Input.
 
         Should raise exception UnboundLocalError or fail
         """
-        try:
-            liten = Liten(spath='testData', fileSize=self.Bogus)
-            BogusType = liten.sizeType()
-        except UnboundLocalError:
-            pass
+        liten = Liten(spath='testData', fileSize=self.Bogus)
+        self.assertRaises(UnboundLocalError, liten.convertSize, liten.fileSize)
 
 
 if __name__ == '__main__':
