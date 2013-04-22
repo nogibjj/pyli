@@ -24,7 +24,7 @@ setup(
             ],
       author='Noah Gift',
       author_email='noah.gift@gmail.com',
-      url='http://pypi.python.org/pypi/liten',
+      url='http://code.google.com/p/liten',
       download_url="http://code.google.com/p/liten/downloads/list",
       license='MIT',
       zip_safe=False,
