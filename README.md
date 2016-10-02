@@ -1,3 +1,5 @@
+[![Build
+Status](https://travis-ci.org/nogibjj/pyli.svg?branch=master)](https://travis-ci.org/nogibjj/pyli)
 #Liten:  A deduplication command line tool and library
 
 ##Summary
