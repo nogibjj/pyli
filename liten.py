@@ -160,9 +160,9 @@ if __debug__:
     LITEN_DEBUG_MODE = int(os.environ.get('LITEN_DEBUG', 0))
     MESSAGE = "LITEN DEBUG MODE ENABLED:"
     if LITEN_DEBUG_MODE == 1:
-        print "%s Print Mode" % MESSAGE
+        print("%s Print Mode" % MESSAGE)
     if LITEN_DEBUG_MODE == 2:
-        print "%s pdb Mode" % MESSAGE
+        print("%s pdb Mode" % MESSAGE)
 
 
 class ActionsMixin(object):
@@ -334,7 +334,7 @@ class Liten(FileUtils):
         else:
             if not isinstance(handler, ActionsMixin):
                 raise TypeError("specified parameter is not ActionsMixin subclass")
-            self.handler = handler                
+            self.handler = handler
 
         self.dupNumber = 0
 
@@ -523,7 +523,7 @@ class Liten(FileUtils):
                                     if self.verbose:
                                         print byte_size/1048576, "MB ", "ORIG: ",\
                                         orig_path, "DUPE: ", path
-                                    
+
                                     #Write separator and original line
                                     report.writerow("")
                                     report.writerow([orig_path,
