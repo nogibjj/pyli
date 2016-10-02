@@ -9,11 +9,11 @@
 #  http://www.opensource.org/licenses/mit-license.php
 #
 
-__version__ = "0.2-dev"
-__date__ = "2009-11-08"
+__version__ = "0.3"
+__date__ = "2016-10-02"
 
 
-__doc__ = """
+__clidoc__ = r"""
 Liten:  A deduplication command line tool and library
 =====================================================
 
@@ -121,9 +121,9 @@ Report:
 By default report LitenDuplicateReport.csv is created in your current
 working directory. It is tab separated CSV file::
 
-  Path	Size	ModDate
-  /Users/ngift/Downloads/bzr-0-2.17.tar	7 MB	07/10/2007 01:43:12 AM
-  /Users/ngift/Downloads/bzr-0-3.17.tar	7 MB	07/10/2007 01:43:27 AM
+  Path  Size    ModDate
+  /Users/ngift/Downloads/bzr-0-2.17.tar 7 MB    07/10/2007 01:43:12 AM
+  /Users/ngift/Downloads/bzr-0-3.17.tar 7 MB    07/10/2007 01:43:27 AM
 
 
 Debug Mode Environmental Variables:
@@ -171,7 +171,7 @@ class ActionsMixin(object):
        Default class does nothing.
     """
 
-    def remove(self, file, dryrun=False):
+    def remove(self, filep, interactive=False, dryrun=False):
         """action to take when file is requested to be removed
         """
         pass
@@ -179,44 +179,43 @@ class ActionsMixin(object):
 class ActionsAutomatic(ActionsMixin):
     """Process automatically, i.e. remove files"""
 
-    def remove(self, file, dryrun=False):
-           """takes a path and deletes file/unlinks
-           """
+    def remove(self, filep, interactive=False, dryrun=False):
+        """takes a path and deletes file/unlinks
+        """
 
-           #simulation mode for deletion
-           if dryrun:
-               print "Dry Run:  %s [NOT DELETED]" % file
-               return None
-           else:
-               print "DELETING:  %s" % file
-               try:
-                   status = os.remove(file)
-               except Exception, err:
-                   print err
-                   return status
+        #simulation mode for deletion
+        if dryrun:
+            print "Dry Run:  %s [NOT DELETED]" % filep
+            return None
+        else:
+            print "DELETING:  %s" % filep
+            try:
+                status = os.remove(filep)
+            except IOError, err:
+                print err
+                return status
 
 class ActionsInteractive(ActionsMixin):
     """Confirm each action interactively"""
 
-    def remove(self, file, dryrun=False):
+    def remove(self, filep, interactive=False, dryrun=False):
 
-           #interactive deletion mode
-           if interactive:
-               input = raw_input("Do you really want to delete %s [N]/Y" % file)
-               if input == "Y":
-                   print "DELETING:  %s" % file
-                   try:
-                       status = os.remove(file)
-                   except Exception, err:
-                       print err
-                       return status
-               elif input == "N":
-                   print "Skipping:  %s" % file
-                   return None
-               else:
-                   print "Skipping:  %s" % file
-                   return None
-
+        #interactive deletion mode
+        if interactive:
+            cli_input = raw_input("Do you really want to delete %s [N]/Y" % filep)
+            if cli_input == "Y":
+                print "DELETING:  %s" % filep
+                try:
+                    status = os.remove(filep)
+                except IOError, err:
+                    print err
+                    return status
+            elif cli_input == "N":
+                print "Skipping:  %s" % filep
+                return None
+            else:
+                print "Skipping:  %s" % filep
+                return None
 
 class FileUtils(object):
 
@@ -248,14 +247,13 @@ class FileUtils(object):
             fp = open(path)
             checksum = hashlib.md5()
             while True:
-                buffer = fp.read(8192)
-                if not buffer:break
-                checksum.update(buffer)
+                dbuffer = fp.read(8192)
+                if not dbuffer:break
+                checksum.update(dbuffer)
             fp.close()
             checksum = checksum.digest()
         except IOError:
-            if self.verbose:
-                print "IO error for %s" % path
+            print "IO error for %s" % path
             checksum = None
             if LITEN_DEBUG_MODE == 1:
                 print 'IO error for %s' % path
@@ -269,11 +267,11 @@ class FileUtils(object):
         date = now.strftime("%Y%m%d")
         return date
 
-    def createExt(self, file):
+    def createExt(self, filep):
         """
         takes a file on a path and returns extension
         """
-        (shortname, ext) = os.path.splitext(file)
+        (_, ext) = os.path.splitext(filep)
         return ext
 
 
@@ -340,7 +338,7 @@ class Liten(FileUtils):
 
         self.dupNumber = 0
 
-    def _cacheChecksum(self, path, checksum, byteSize, file):
+    def _cacheChecksum(self, path, checksum, byteSize, filep):
 
         checksum_cache_value = {'fullPath': path,
                                     'checksum': checksum,
@@ -349,7 +347,7 @@ class Liten(FileUtils):
                                     'searchDate': self.createSearchDate(),
                                     'bytes': byteSize,
                                     'fileType': None,
-                                    'fileExt': self.createExt(file)}
+                                    'fileExt': self.createExt(filep)}
 
         self.checksum_cache_key[checksum]=checksum_cache_value
 
@@ -389,7 +387,7 @@ class Liten(FileUtils):
             for key in patterns:
                 mult = patterns[key]
 
-                if re.match("\d+%s$" % key, filesize):
+                if re.match(r"\d+%s$" % key, filesize):
                     if LITEN_DEBUG_MODE:
                         print "Sizestr: %s Key: %s Size: %s Multiplier: %s" % \
                                (sizestr, key, filesize, mult)
@@ -445,6 +443,7 @@ class Liten(FileUtils):
         try:
             byteSizeThreshold = self.convertSize(self.fileSize)
         except ValueError, err:
+            print err
             #Note this gets caught using optparse which is cleaner
             raise UnboundLocalError
         if LITEN_DEBUG_MODE == 1:
@@ -460,9 +459,9 @@ class Liten(FileUtils):
             print "Printing dups over %s MB using md5 checksum: \
             [SIZE] [ORIG] [DUP] " % int(byteSizeThreshold/1048576)
 
-        for root, dirs, files in main_path:
-            for file in files:
-                path = os.path.join(root,file)      #establishes full path
+        for root, _, files in main_path:
+            for filep in files:
+                path = os.path.join(root,filep)      #establishes full path
                 if os.path.isfile(path):            #ignores symbolic links
                     byte_size = os.path.getsize(path)
                     #gets number of file examined
@@ -500,12 +499,12 @@ class Liten(FileUtils):
                                         # save original file record in a checksum cache
                                         self._cacheChecksum(orig_path, orig_checksum,
                                                                 byte_size,
-                                                                file)
+                                                                filep)
 
                                 #now original file checksum is 100% in checksum cache
                                 #recheck the condition
                                 if checksum not in self.checksum_cache_key:
-                                    self._cacheChecksum(path, checksum, byte_size, file)
+                                    self._cacheChecksum(path, checksum, byte_size, filep)
                                     #print "not a Dupe? ", path
 
                                 else: # fill a dupe record
@@ -552,7 +551,7 @@ class Liten(FileUtils):
                                                             'checksum': checksum,
                                                             'bytes': byte_size,
                                                             'fileType': None,
-                                                            'fileExt': self.createExt(file)}
+                                                            'fileExt': self.createExt(filep)}
                                     self.confirmed_dup_key[path]=confirmed_dup_value
 
 
@@ -579,14 +578,14 @@ class ProcessConfig(object):
     """
     Reads in optional configuration file that replaces command line options
     """
-    def __init__(self, file="config.ini"):
-        self.file = file
+    def __init__(self, filep="config.ini"):
+        self.filep = filep
 
     def readConfig(self):
         """reads and processes config file and returns results"""
 
         Config = ConfigParser.ConfigParser()
-        Config.read(self.file)
+        Config.read(self.filep)
         sections = Config.sections()
         for parameter in sections:
             #uncomment line below to see how this config file is parsed
@@ -595,19 +594,19 @@ class ProcessConfig(object):
                 path = Config.items(parameter)[0][1]
                 if LITEN_DEBUG_MODE == 1:
                     print "Config file path: %s" % path
-            except:
+            except ConfigParser.Error:
                 path = None
             try:
                 pattern = Config.items(parameter)[1][1]
                 if LITEN_DEBUG_MODE == 1:
                     print "Config file pattern: %s" % pattern
-            except:
+            except ConfigParser.Error:
                 pattern = None
             try:
                 size = Config.items(parameter)[2][1]
                 if LITEN_DEBUG_MODE == 1:
                     print "Config file size: %s" % size
-            except:
+            except ConfigParser.Error:
                 size = None
         return path, size, pattern
 
@@ -664,7 +663,7 @@ class LitenController(object):
             if __debug__:
                 if LITEN_DEBUG_MODE == 2:
                     pdb.set_trace()
-            process = ProcessConfig(file=options.config)
+            process = ProcessConfig(filep=options.config)
             try:
                 config = process.readConfig()
                 print config
@@ -679,7 +678,7 @@ class LitenController(object):
                             config = options.config)
                 start.diskWalker()
                 sys.exit(0)
-            except Exception, err:
+            except ConfigParser.Error, err:
                 print "Problem parsing config file: %s" % options.config
                 print err
                 sys.exit(1)
@@ -687,9 +686,9 @@ class LitenController(object):
         if len(arguments) > 0:
             for arg in arguments:
                 if not os.path.isdir(arg):
-                   print "Search path does't exist or is not a directory: %s"\
-                   % arg
-                   sys.exit(1)
+                    print "Search path does't exist or is not a directory: %s"\
+                    % arg
+                    sys.exit(1)
             try:
                 if options.delete:
                     actions_handler = ActionsAutomatic()

@@ -5,6 +5,7 @@ import doctest
 from doctest import DocTestSuite
 
 from os.path import abspath,dirname,join
+from liten import Liten
 
 class TestLitenBaseClass(unittest.TestCase):
     """Tests for LitenBaseClass Class."""
