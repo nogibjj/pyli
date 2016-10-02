@@ -1,9 +1,5 @@
 #Liten:  A deduplication command line tool and library
 
-:Author: Noah Gift
-:Version: $Revision: 0.1.5 $
-:Copyright: This document has been placed in the public domain.
-
 ##Summary
 
 
