@@ -5,7 +5,7 @@ install:
 	pip install -r requirements.txt
 
 lint:
-	pylint --disable=R,C liten
+	pylint --disable=R,C,W0402 liten
 
 lint-full:
 	pylint --disable=R, liten
