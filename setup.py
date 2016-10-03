@@ -14,7 +14,7 @@ f.close()
 
 setup(
       name='liten',
-      version='0.1.5',
+      version='0.1.6',
       description='a de-duplication command line tool',
       long_description=long_description,
       classifiers=[
@@ -24,8 +24,8 @@ setup(
             ],
       author='Noah Gift',
       author_email='noah.gift@gmail.com',
-      url='http://code.google.com/p/liten',
-      download_url="http://code.google.com/p/liten/downloads/list",
+      url='https://github.com/nogibjj/pyli',
+      download_url="https://github.com/nogibjj/pyli",
       license='MIT',
       zip_safe=False,
       py_modules=['liten', 'test_liten'],
