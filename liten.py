@@ -185,14 +185,14 @@ class ActionsAutomatic(ActionsMixin):
 
         #simulation mode for deletion
         if dryrun:
-            print "Dry Run:  %s [NOT DELETED]" % filep
+            print("Dry Run:  %s [NOT DELETED]" % filep)
             return None
         else:
-            print "DELETING:  %s" % filep
+            print("DELETING:  %s" % filep)
             try:
                 status = os.remove(filep)
             except IOError, err:
-                print err
+                print(err)
                 return status
 
 class ActionsInteractive(ActionsMixin):
@@ -204,17 +204,17 @@ class ActionsInteractive(ActionsMixin):
         if interactive:
             cli_input = raw_input("Do you really want to delete %s [N]/Y" % filep)
             if cli_input == "Y":
-                print "DELETING:  %s" % filep
+                print("DELETING:  %s" % filep)
                 try:
                     status = os.remove(filep)
                 except IOError, err:
-                    print err
+                    print(err)
                     return status
             elif cli_input == "N":
-                print "Skipping:  %s" % filep
+                print("Skipping:  %s" % filep)
                 return None
             else:
-                print "Skipping:  %s" % filep
+                print("Skipping:  %s" % filep)
                 return None
 
 class FileUtils(object):
@@ -253,13 +253,13 @@ class FileUtils(object):
             fp.close()
             checksum = checksum.digest()
         except IOError:
-            print "IO error for %s" % path
+            print("IO error for %s" % path)
             checksum = None
             if LITEN_DEBUG_MODE == 1:
-                print 'IO error for %s' % path
+                print('IO error for %s' % path)
         finally:
             if LITEN_DEBUG_MODE:
-                print "Performing checksum on: %s" % path
+                print("Performing checksum on: %s" % path)
         return checksum
 
     def createSearchDate(self):
@@ -389,17 +389,15 @@ class Liten(FileUtils):
 
                 if re.match(r"\d+%s$" % key, filesize):
                     if LITEN_DEBUG_MODE:
-                        print "Sizestr: %s Key: %s Size: %s Multiplier: %s" % \
-                               (sizestr, key, filesize, mult)
+                        print("Sizestr: %s Key: %s Size: %s Multiplier: %s" % \
+                               (sizestr, key, filesize, mult))
                     byteValue = int(filesize.rstrip(key)) * mult
-                    #print "Converted byte value: %s " % byteValue
                     break
             else:
                 byteValue = int(filesize.strip()) * patterns[default]
-                #print "Converted byte value: %s " % byteValue
         except ValueError, err:
             if LITEN_DEBUG_MODE:
-                print "Problem evaluating:", sizestr, Exception, err
+                print("Problem evaluating:", sizestr, Exception, err)
             raise
         return byteValue
 
@@ -422,7 +420,7 @@ class Liten(FileUtils):
         {}
         >>> Liten.fileSize="45bytes"
         >>> dupes = Liten.diskWalker()
-        >>> print len(dupes)
+        >>> print(len(dupes))
         2
 
         """
@@ -443,11 +441,11 @@ class Liten(FileUtils):
         try:
             byteSizeThreshold = self.convertSize(self.fileSize)
         except ValueError, err:
-            print err
+            print(err)
             #Note this gets caught using optparse which is cleaner
             raise UnboundLocalError
         if LITEN_DEBUG_MODE == 1:
-            print "File size threshold (in bytes) %s" % byteSizeThreshold
+            print("File size threshold (in bytes) %s" % byteSizeThreshold)
         self.dupNumber=0
         byte_count=0
         record_count=0
@@ -456,8 +454,8 @@ class Liten(FileUtils):
         start = time.time()
 
         if self.verbose:
-            print "Printing dups over %s MB using md5 checksum: \
-            [SIZE] [ORIG] [DUP] " % int(byteSizeThreshold/1048576)
+            print("Printing dups over %s MB using md5 checksum: \
+            [SIZE] [ORIG] [DUP] " % int(byteSizeThreshold/1048576))
 
         for root, _, files in main_path:
             for filep in files:
@@ -470,7 +468,7 @@ class Liten(FileUtils):
                     if byte_size >= byteSizeThreshold:
                         if fnmatch(path, self.pattern):         #default * match
                             if LITEN_DEBUG_MODE == 1:
-                                print "Matches: %s" % path
+                                print("Matches: %s" % path)
 
                             if byte_size not in self.byte_cache:
                                 self.byte_cache[byte_size] = {
@@ -482,7 +480,7 @@ class Liten(FileUtils):
                                 #size matched, process checksums for a given file size
 
                                 if LITEN_DEBUG_MODE == 1:
-                                    print 'Doing checksum on %s' % path
+                                    print('Doing checksum on %s' % path)
 
                                 checksum = self.createChecksum(path)
 
@@ -505,7 +503,6 @@ class Liten(FileUtils):
                                 #recheck the condition
                                 if checksum not in self.checksum_cache_key:
                                     self._cacheChecksum(path, checksum, byte_size, filep)
-                                    #print "not a Dupe? ", path
 
                                 else: # fill a dupe record
                                     #accumulates bytes of duplicates found
@@ -513,7 +510,6 @@ class Liten(FileUtils):
                                     #accumulates a dupNumber record
                                     self.dupNumber += 1
 
-                                    #print byte_count/1048576, " MB's wasted"
                                     #since we have a match, creating record with match partner
                                     #and printing match original.
                                     #grab original file path from checksum_cache dict
@@ -521,8 +517,8 @@ class Liten(FileUtils):
                                     orig_path = self.checksum_cache_key[checksum]['fullPath']
                                     orig_mod_date = self.checksum_cache_key[checksum]['modDate']
                                     if self.verbose:
-                                        print byte_size/1048576, "MB ", "ORIG: ",\
-                                        orig_path, "DUPE: ", path
+                                        print(byte_size/1048576, "MB ", "ORIG: ",\
+                                        orig_path, "DUPE: ", path)
 
                                     #Write separator and original line
                                     report.writerow("")
@@ -556,21 +552,20 @@ class Liten(FileUtils):
 
 
         if self.verbose:
-            print "\n"
-            print "LITEN REPORT: \n"
-            print "Search Path:                 ", self.spath
-            print "Filtered For Pattern Match:  ", self.pattern
+            print ("\n")
+            print ("LITEN REPORT: \n")
+            print ("Search Path:                 ", self.spath)
+            print ("Filtered For Pattern Match:  ", self.pattern)
             if self.config:
-                print"Used config file:            ",self.config
-            print "Total Files Searched:        ", record_count
-            #print "Duplicates Found:            ", #incorrect numberlen(self.confirmed_dup_key)
-            print "Wasted Space in Duplicates:  ", byte_count/1048576, " MB"
-            print "Report Generated at:         ", self.reportPath
+                print("Used config file:            ",self.config)
+            print ("Total Files Searched:        ", record_count)
+            print ("Wasted Space in Duplicates:  ", byte_count/1048576, " MB")
+            print ("Report Generated at:         ", self.reportPath)
             #get finish time
             end = time.time()
             timer = end - start
             timer = long(timer/60)
-            print "Search Time:                 ", timer, " minutes\n"
+            print ("Search Time:                 ", timer, " minutes\n")
 
         return  self.confirmed_dup_key   #Note returns a dictionary of all duplicate records
 
@@ -589,23 +584,22 @@ class ProcessConfig(object):
         sections = Config.sections()
         for parameter in sections:
             #uncomment line below to see how this config file is parsed
-            #print Config.items(parameter)
             try:
                 path = Config.items(parameter)[0][1]
                 if LITEN_DEBUG_MODE == 1:
-                    print "Config file path: %s" % path
+                    print("Config file path: %s" % path)
             except ConfigParser.Error:
                 path = None
             try:
                 pattern = Config.items(parameter)[1][1]
                 if LITEN_DEBUG_MODE == 1:
-                    print "Config file pattern: %s" % pattern
+                    print("Config file pattern: %s" % pattern)
             except ConfigParser.Error:
                 pattern = None
             try:
                 size = Config.items(parameter)[2][1]
                 if LITEN_DEBUG_MODE == 1:
-                    print "Config file size: %s" % size
+                    print("Config file size: %s" % size)
             except ConfigParser.Error:
                 size = None
         return path, size, pattern
@@ -666,12 +660,12 @@ class LitenController(object):
             process = ProcessConfig(filep=options.config)
             try:
                 config = process.readConfig()
-                print config
+                print(config)
                 path = config[0]
                 size = config[1]
                 pattern = config[2]
-                print "Using %s, path=%s, size=%s, pattern=%s" % \
-                        (options.config, path,size, pattern)
+                print("Using %s, path=%s, size=%s, pattern=%s" % \
+                        (options.config, path,size, pattern))
                 start = Liten(spath = path,
                             fileSize = size,
                             pattern = pattern,
@@ -679,15 +673,15 @@ class LitenController(object):
                 start.diskWalker()
                 sys.exit(0)
             except ConfigParser.Error, err:
-                print "Problem parsing config file: %s" % options.config
-                print err
+                print("Problem parsing config file: %s" % options.config)
+                print(err)
                 sys.exit(1)
 
         if len(arguments) > 0:
             for arg in arguments:
                 if not os.path.isdir(arg):
-                    print "Search path does't exist or is not a directory: %s"\
-                    % arg
+                    print("Search path does't exist or is not a directory: %s"\
+                    % arg)
                     sys.exit(1)
             try:
                 if options.delete:
@@ -703,11 +697,11 @@ class LitenController(object):
                 start.diskWalker()
             #Here I catch bogus size input exceptions
             except UnboundLocalError, err:
-                print err
+                print(err)
                 if LITEN_DEBUG_MODE == 1:
-                    print "Error: %s" % err
-                print "Invalid Search Size Parameter: %s run --help for help"\
-                % options.size
+                    print("Error: %s" % err)
+                print("Invalid Search Size Parameter: %s run --help for help"\
+                % options.size)
                 sys.exit(1)
 
         else:
