@@ -1,5 +1,5 @@
 test:
-	@cd tests; PYTHONPATH=.. py.test --cov=liten *.py
+	@cd tests; PYTHONPATH=.. py.test -v --cov=liten *.py
 
 install:
 	pip install -r requirements.txt
