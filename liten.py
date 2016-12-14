@@ -147,7 +147,7 @@ import time
 import optparse
 import hashlib
 import pdb
-import configparser
+import ConfigParser
 from itertools import chain
 from fnmatch import fnmatch
 
@@ -579,7 +579,7 @@ class ProcessConfig(object):
     def readConfig(self):
         """reads and processes config file and returns results"""
 
-        Config = configparser.ConfigParser()
+        Config = ConfigParser.ConfigParser()
         Config.read(self.filep)
         sections = Config.sections()
         for parameter in sections:
@@ -588,19 +588,19 @@ class ProcessConfig(object):
                 path = Config.items(parameter)[0][1]
                 if LITEN_DEBUG_MODE == 1:
                     print(("Config file path: %s" % path))
-            except configparser.Error:
+            except ConfigParser.Error:
                 path = None
             try:
                 pattern = Config.items(parameter)[1][1]
                 if LITEN_DEBUG_MODE == 1:
                     print(("Config file pattern: %s" % pattern))
-            except configparser.Error:
+            except ConfigParser.Error:
                 pattern = None
             try:
                 size = Config.items(parameter)[2][1]
                 if LITEN_DEBUG_MODE == 1:
                     print(("Config file size: %s" % size))
-            except configparser.Error:
+            except ConfigParser.Error:
                 size = None
         return path, size, pattern
 
@@ -672,7 +672,7 @@ class LitenController(object):
                             config = options.config)
                 start.diskWalker()
                 sys.exit(0)
-            except configparser.Error as err:
+            except ConfigParser.Error as err:
                 print(("Problem parsing config file: %s" % options.config))
                 print(err)
                 sys.exit(1)
